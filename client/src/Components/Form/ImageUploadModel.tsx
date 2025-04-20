@@ -115,7 +115,7 @@ import {
   Button,
   TextField,
 } from "@mui/material";
-import { useUpload } from "../../context/UploadContext"; // ✅ Correct import
+import { useUpload } from "../../context/UploadContext";
 
 interface ImageUploadModelProps {
   handleImagePopOpen: boolean;
@@ -135,8 +135,7 @@ const ImageUploadModel: React.FC<ImageUploadModelProps> = ({
   const [image, setImage] = useState<File | undefined>(undefined);
   const [imageWarning, setImageWarning] = useState("");
 
-  const { uploadImage } = useUpload(); // ✅ Use context hook
-
+  const { uploadImage } = useUpload();
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       setImage(e.target.files[0]);

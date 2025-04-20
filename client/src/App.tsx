@@ -58,23 +58,12 @@ const App: React.FC = () => {
               <Route path="/register" element={<Register />} />
 
               {/* Protected Routes */}
-              <Route element={<PrivateRoute />}>
-                <Route path="/form/:formId" element={<EditForm />} />
-              </Route>
+              {/* <Route element={<PrivateRoute />}> */}
+              <Route path="/form/:formId" element={<EditForm />} />
+              {/* </Route> */}
 
               {/* Public Form View */}
-              <Route
-                path="/s/:formId"
-                element={
-                  <UserView
-                    match={{
-                      params: {
-                        formId: "",
-                      },
-                    }}
-                  />
-                }
-              />
+              <Route path="/s/:formId" element={<UserView />} />
               <Route path="/fuck" element={<ErrorRadios />} />
             </Routes>
           </div>

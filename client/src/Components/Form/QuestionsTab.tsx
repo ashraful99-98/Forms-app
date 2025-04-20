@@ -13,6 +13,8 @@ import {
   Button,
   CircularProgress,
   Divider,
+  Box,
+  Alert,
 } from "@mui/material";
 import CropOriginalIcon from "@mui/icons-material/CropOriginal";
 import CloseIcon from "@mui/icons-material/Close";
@@ -23,10 +25,11 @@ import FilterNoneIcon from "@mui/icons-material/FilterNone";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 import SaveIcon from "@mui/icons-material/Save";
-import { useFormContext } from "../../context/FormContext";
-import ImageUploadModel from "./ImageUploadModel";
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
+import ImageUploadModel from "./ImageUploadModel";
+import { useFormContext } from "../../context/FormContext";
 import { UploadProvider } from "../../context/UploadContext";
+import titleImg from "../../images/untitlteImg.avif";
 // Type definitions for a question, its options and the form data.
 interface OptionType {
   optionText: string;
@@ -75,6 +78,8 @@ const QuestionsTab: React.FC<QuestionsTabProps> = ({
   });
   const [formData, setFormData] = useState<FormDataType>(initialFormData);
   const [loadingFormData, setLoadingFormData] = useState<boolean>(true);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   // Grab the editForm function from the context to update the form.
   const { editForm } = useFormContext();
@@ -99,6 +104,26 @@ const QuestionsTab: React.FC<QuestionsTabProps> = ({
   }, [initialFormData]);
 
   // Save questions using the context’s editForm function.
+  // const saveQuestions = async () => {
+  //   const data = {
+  //     formId: formData._id,
+  //     name: formData.name,
+  //     description: formData.description,
+  //     questions: questions,
+  //   };
+
+  //   try {
+  //     const updatedForm = await editForm(data);
+  //     if (updatedForm?.questions) {
+  //       setQuestions(updatedForm.questions);
+  //     }
+  //   } catch (error: any) {
+  //     const resMessage =
+  //       error.response?.data?.message || error.message || error.toString();
+  //     console.error(resMessage);
+  //   }
+  // };
+
   const saveQuestions = async () => {
     const data = {
       formId: formData._id,
@@ -111,11 +136,22 @@ const QuestionsTab: React.FC<QuestionsTabProps> = ({
       const updatedForm = await editForm(data);
       if (updatedForm?.questions) {
         setQuestions(updatedForm.questions);
+        setSuccessMessage("Questions saved successfully!");
+        setErrorMessage(null);
+
+        setTimeout(() => {
+          setSuccessMessage(null);
+        }, 3000);
       }
     } catch (error: any) {
       const resMessage =
         error.response?.data?.message || error.message || error.toString();
       console.error(resMessage);
+      setErrorMessage(resMessage);
+      setSuccessMessage(null);
+      setTimeout(() => {
+        setErrorMessage(null);
+      }, 3000);
     }
   };
 
@@ -529,90 +565,124 @@ const QuestionsTab: React.FC<QuestionsTabProps> = ({
   };
 
   return (
-    <div
-      style={{ marginTop: "15px", marginBottom: "7px", paddingBottom: "30px" }}
+    <Grid
+      container
+      direction="column"
+      alignItems="center"
+      spacing={4}
+      sx={{ mt: 2, mb: 2, pb: 4, px: 2 }}
     >
-      <Grid container direction="column" alignItems="center">
-        {loadingFormData && <CircularProgress />}
-        {/* <Grid item xs={12} sm={5} style={{ width: "100%" }}> */}
-        <Grid style={{ borderTop: "10px solid teal", borderRadius: 10 }}>
-          <div>
-            <Paper elevation={2} style={{ width: "100%" }}>
-              <div
-                style={{
-                  display: "flex",
-                  flexDirection: "column",
-                  alignItems: "flex-start",
-                  marginLeft: "15px",
-                  paddingTop: "20px",
-                  paddingBottom: "20px",
-                }}
-              >
-                <Typography
-                  variant="h4"
-                  style={{
-                    fontFamily: "sans-serif Roboto",
-                    marginBottom: "15px",
-                  }}
-                >
-                  {formData.name}
-                </Typography>
-                <Typography variant="subtitle1">
-                  {formData.description}
-                </Typography>
+      {loadingFormData && <CircularProgress />}
+
+      {/* Form Name & Description */}
+      <Grid>
+        <Box sx={{ position: "relative", width: "100%" }}>
+          {/* Background Image */}
+          <Box
+            component="div"
+            sx={{
+              position: "absolute",
+              top: 0,
+              left: 0,
+              width: "100%",
+              height: "100%",
+              backgroundImage: `url(${titleImg})`,
+              backgroundSize: "cover",
+              backgroundPosition: "center",
+              opacity: 0.9,
+              zIndex: 1,
+              borderRadius: 2,
+            }}
+          />
+
+          {/* Foreground Content */}
+          <Paper
+            elevation={2}
+            sx={{
+              width: "100%",
+              borderTop: "8px solid teal",
+              borderRadius: 2,
+              overflow: "hidden",
+              position: "relative",
+              zIndex: 2,
+              p: { xs: 2, sm: 4 },
+              backgroundColor: "rgba(255, 255, 255, 0.85)", // slight white transparency to make text stand out
+            }}
+          >
+            <Typography
+              variant="h4"
+              sx={{
+                fontFamily: "Roboto, sans-serif",
+                mb: 2,
+              }}
+            >
+              {formData?.name || "Untitled Form"}
+            </Typography>
+            <Typography variant="subtitle1">
+              {formData?.description || "No description provided."}
+            </Typography>
+          </Paper>
+        </Box>
+
+        {errorMessage && (
+          <Alert severity="error" sx={{ mb: 2 }}>
+            {errorMessage}
+          </Alert>
+        )}
+        {successMessage && (
+          <Alert severity="success" sx={{ mb: 2 }}>
+            {successMessage}
+          </Alert>
+        )}
+
+        {/* Image Upload and Questions Section */}
+        {/* <Grid item xs={12} sm={10} md={8} lg={6}> */}
+        <UploadProvider>
+          <ImageUploadModel
+            handleImagePopOpen={openUploadImagePop}
+            handleImagePopClose={() => setOpenUploadImagePop(false)}
+            updateImageLink={updateImageLink}
+            contextData={imageContextData}
+          />
+        </UploadProvider>
+
+        <DragDropContext onDragEnd={onDragEnd}>
+          <Droppable droppableId="droppable">
+            {(provided) => (
+              <div {...provided.droppableProps} ref={provided.innerRef}>
+                {questionsUI()}
+                {provided.placeholder}
               </div>
-            </Paper>
-          </div>
+            )}
+          </Droppable>
+        </DragDropContext>
+
+        {/* Buttons Section */}
+        <Grid container spacing={2} justifyContent="center" sx={{ mt: 2 }}>
+          <Grid>
+            <Button
+              variant="contained"
+              onClick={addMoreQuestionField}
+              endIcon={<AddCircleIcon />}
+              fullWidth
+            >
+              Add Question
+            </Button>
+          </Grid>
+          <Grid>
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={saveQuestions}
+              endIcon={<SaveIcon />}
+              fullWidth
+            >
+              Save Questions
+            </Button>
+          </Grid>
         </Grid>
-        <Grid style={{ paddingTop: "10px" }}>
-          <div>
-            <UploadProvider>
-              <ImageUploadModel
-                handleImagePopOpen={openUploadImagePop}
-                handleImagePopClose={() => setOpenUploadImagePop(false)}
-                updateImageLink={updateImageLink}
-                contextData={imageContextData}
-              />
-            </UploadProvider>
-            {/* <ImageUploadModel
-              handleImagePopOpen={openUploadImagePop}
-              handleImagePopClose={() => setOpenUploadImagePop(false)}
-              updateImageLink={updateImageLink}
-              contextData={imageContextData}
-            /> */}
-            <DragDropContext onDragEnd={onDragEnd}>
-              <Droppable droppableId="droppable">
-                {(provided) => (
-                  <div {...provided.droppableProps} ref={provided.innerRef}>
-                    {questionsUI()}
-                    {provided.placeholder}
-                  </div>
-                )}
-              </Droppable>
-            </DragDropContext>
-            <div style={{ marginTop: "10px" }}>
-              <Button
-                variant="contained"
-                onClick={addMoreQuestionField}
-                endIcon={<AddCircleIcon />}
-              >
-                Add Question
-              </Button>
-              <Button
-                variant="contained"
-                color="primary"
-                onClick={saveQuestions}
-                style={{ margin: "15px" }}
-                endIcon={<SaveIcon />}
-              >
-                Save Questions
-              </Button>
-            </div>
-          </div>
-        </Grid>
-        {/* </Grid> */}
       </Grid>
-    </div>
+    </Grid>
   );
 };
 

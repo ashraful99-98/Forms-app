@@ -1,20 +1,20 @@
-// import React from 'react';
-// import { makeStyles } from '@mui/styles';
-// import { Theme } from '@mui/material/styles';
-// import Container from '@mui/material/Container';
-// import Typography from '@mui/material/Typography';
-// import Link from '@mui/material/Link';
+// import React from "react";
+// import { makeStyles } from "@mui/styles";
+// import { Theme } from "@mui/material/styles";
+// import Container from "@mui/material/Container";
+// import Typography from "@mui/material/Typography";
+// import Link from "@mui/material/Link";
 
 // // A simple Copyright component.
 // function Copyright(): JSX.Element {
 //   return (
 //     <Typography variant="body2" color="textSecondary" align="center">
-//       {'Copyright © '}
+//       {"Copyright © "}
 //       <Link color="inherit" href="https://material-ui.com/">
 //         Your Website
-//       </Link>{' '}
+//       </Link>{" "}
 //       {new Date().getFullYear()}
-//       {'.'}
+//       {"."}
 //     </Typography>
 //   );
 // }
@@ -22,9 +22,9 @@
 // // Define styles using makeStyles with a typed Theme.
 // const useStyles = makeStyles((theme: Theme) => ({
 //   root: {
-//     display: 'flex',
-//     flexDirection: 'column',
-//     minHeight: '100vh',
+//     display: "flex",
+//     flexDirection: "column",
+//     minHeight: "100vh",
 //   },
 //   main: {
 //     marginTop: theme.spacing(8),
@@ -32,10 +32,12 @@
 //   },
 //   footer: {
 //     padding: theme.spacing(3, 2),
-//     marginTop: 'auto',
+//     marginTop: "auto",
 //     // For MUI v4, theme.palette.type is used; for MUI v5, replace with theme.palette.mode
 //     backgroundColor:
-//       theme.palette.mode === 'light' ? theme.palette.grey[200] : theme.palette.grey[800],
+//       theme.palette.mode === "light"
+//         ? theme.palette.grey[200]
+//         : theme.palette.grey[800],
 //   },
 // }));
 
