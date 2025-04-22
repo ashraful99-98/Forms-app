@@ -1,28 +1,3 @@
-// import mongoose, { Document, Schema, Model } from 'mongoose';
-
-// // Image document interface
-// export interface IImage extends Document {
-//   image: string;
-//   createdAt?: Date;
-//   updatedAt?: Date;
-// }
-
-// // Define schema
-// const imageSchema = new Schema<IImage>(
-//   {
-//     image: {
-//       type: String,
-//       required: true,
-//     },
-//   },
-//   { timestamps: true }
-// );
-
-// // Create and export model
-// const ImageModel: Model<IImage> = mongoose.model<IImage>('Image', imageSchema);
-// export default ImageModel;
-
-
 import mongoose from "mongoose";
 
 const ImageSchema = new mongoose.Schema({
@@ -30,3 +5,25 @@ const ImageSchema = new mongoose.Schema({
 }, { timestamps: true });
 
 export default mongoose.model("Image", ImageSchema);
+
+
+// import mongoose, { Schema, Document } from "mongoose";
+
+// interface IImage extends Document {
+//   image: {
+//     public_id: string;
+//     url: string;
+//   };
+// }
+
+// const ImageSchema = new Schema<IImage>(
+//   {
+//     image: {
+//       public_id: { type: String, required: true },
+//       url: { type: String, required: true },
+//     },
+//   },
+//   { timestamps: true }
+// );
+
+// export default mongoose.model<IImage>("Image", ImageSchema);

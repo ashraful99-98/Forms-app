@@ -1,22 +1,3 @@
-// import express from 'express';
-// import {
-//   blockUser,
-//   deleteUser,
-//   getAllUsers,
-//   getUserById,
-//   unblockUser
-// } from '../controllers/userController';
-
-// const router = express.Router();
-
-// router.get('/', getAllUsers);
-// router.get('/:id', getUserById);
-// router.put('/block/:id', blockUser);
-// router.put('/unblock/:id', unblockUser);
-// router.delete('/:id', deleteUser);
-
-// export default router;
-
 import express from 'express';
 import {
   getAllUsers,
@@ -27,16 +8,31 @@ import {
   deleteUserById,
   blockUsers,
   unblockUsers,
-  deleteUsers
+  deleteUsers,
+  updateUserRole
 } from '../controllers/userController';
+import authMiddleware, { authorizeRoles } from '../middleware/authMiddleware';
+
 
 const router = express.Router();
 
 router.get('/', getAllUsers);
 
+// router.get(
+//   '/',
+//   authMiddleware,              
+//   authorizeRoles('admin'),     
+//   getAllUsers                   
+// );
+
 router.get('/me', getCurrentUser);
 
 router.get('/:id', getUserById);
+
+router.put(
+  '/updateRole',
+  updateUserRole
+);
 
 router.patch('/block/:id', blockUserById);
 
