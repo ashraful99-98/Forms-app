@@ -2,7 +2,6 @@ import React from "react";
 import { makeStyles } from "@mui/styles";
 import { Button, Radio, RadioGroup, FormControlLabel } from "@mui/material";
 
-// Define a basic style for our button
 const useStyles = makeStyles({
   button: {
     marginTop: "1rem",
@@ -14,7 +13,6 @@ const ErrorRadios: React.FC = () => {
   const [value, setValue] = React.useState<string>("");
   const [error, setError] = React.useState<boolean>(false);
 
-  // Type the event as React.ChangeEvent<HTMLInputElement>
   const handleRadioChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     console.log(event.target.value);
     setValue(event.target.value);

@@ -425,10 +425,14 @@ export interface ResponseType {
   submittedAt?: string;
 }
 
-interface ResponseTabProps {
+export interface ResponseTabProps {
   formData: FormType;
   formId: string;
 }
+
+// interface QuestionsTabProps {
+//   formData: FormDataType;
+// }
 
 const ResponseTab: React.FC<ResponseTabProps> = ({ formData, formId }) => {
   const [questions, setQuestions] = useState<QuestionType[]>([]);

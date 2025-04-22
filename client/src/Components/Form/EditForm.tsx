@@ -38,7 +38,7 @@ import { makeStyles } from "@mui/styles";
 import { useFormContext } from "../../context/FormContext";
 import { useAuth } from "../../context/AuthContext";
 import QuestionsTab, { FormDataType } from "./QuestionsTab";
-import ResponseTab from "../Response/ResponseTab";
+import ResponseTab, { ResponseType } from "../Response/ResponseTab";
 
 const useStyles = makeStyles({
   root: {
@@ -246,8 +246,8 @@ const EditForm: React.FC = () => {
             <QuestionsTab formData={formDetails as FormDataType} />
           </TabPanel>
           <TabPanel value={value} index={1}>
-            {/* <ResponseTab formData={formDetails} formId={formID} /> */}
-            <ResponseTab formData={formDetails as FormType} formId={formID} />
+            {/* <ResponseTab formData={formDetails as FormType} formId={formID} /> */}
+            {/* <ResponseTab formData={formDetails as FormType} formId={formID} /> */}
           </TabPanel>
         </>
       ) : (

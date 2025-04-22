@@ -198,9 +198,7 @@ const QuestionsHeader: React.FC = () => {
                               }
                             />
                             <Typography variant="body2" color="textSecondary">
-                              Lorem ipsum dolor sit amet, consectetur adipiscing
-                              elit. Suspendisse malesuada lacus ex, sit amet
-                              blandit leo lobortis eget.
+                              No More
                             </Typography>
                           </div>
                         </AccordionDetails>

@@ -104,26 +104,6 @@ const QuestionsTab: React.FC<QuestionsTabProps> = ({
   }, [initialFormData]);
 
   // Save questions using the context’s editForm function.
-  // const saveQuestions = async () => {
-  //   const data = {
-  //     formId: formData._id,
-  //     name: formData.name,
-  //     description: formData.description,
-  //     questions: questions,
-  //   };
-
-  //   try {
-  //     const updatedForm = await editForm(data);
-  //     if (updatedForm?.questions) {
-  //       setQuestions(updatedForm.questions);
-  //     }
-  //   } catch (error: any) {
-  //     const resMessage =
-  //       error.response?.data?.message || error.message || error.toString();
-  //     console.error(resMessage);
-  //   }
-  // };
-
   const saveQuestions = async () => {
     const data = {
       formId: formData._id,
@@ -606,7 +586,7 @@ const QuestionsTab: React.FC<QuestionsTabProps> = ({
               position: "relative",
               zIndex: 2,
               p: { xs: 2, sm: 4 },
-              backgroundColor: "rgba(255, 255, 255, 0.85)", // slight white transparency to make text stand out
+              backgroundColor: "rgba(255, 255, 255, 0.85)",
             }}
           >
             <Typography

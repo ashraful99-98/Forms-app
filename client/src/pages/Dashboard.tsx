@@ -17,6 +17,7 @@ import {
   Box,
   useTheme,
   useMediaQuery,
+  Link,
 } from "@mui/material";
 
 import { styled, alpha } from "@mui/material/styles";
@@ -26,6 +27,7 @@ import {
   MoreVert as MoreIcon,
   Add as AddIcon,
   Home as HomeIcon,
+  AdminPanelSettings,
 } from "@mui/icons-material";
 
 import { useNavigate } from "react-router-dom";
@@ -75,7 +77,7 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 const Dashboard: React.FC = () => {
   const navigate = useNavigate();
   const { user, logout } = useAuth();
-  const { createForm, fetchUserForms, forms, fetchAllForms } = useFormContext();
+  const { createForm, fetchUserForms } = useFormContext();
 
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] =
@@ -154,6 +156,18 @@ const Dashboard: React.FC = () => {
         </IconButton>
         <p>Create Form</p>
       </MenuItem>
+
+      {user?.role === "admin" && (
+        <MenuItem href="/admin">
+          <IconButton color="inherit">
+            <Link className={`cursor-pointer`} href={"/admin"}>
+              <AdminPanelSettings sx={{ font: "20px" }} />
+            </Link>
+          </IconButton>
+          <p>Admin Dashboard</p>
+        </MenuItem>
+      )}
+
       <MenuItem onClick={() => setAnchorEl(null)}>
         <IconButton color="inherit">
           <AccountCircle />
@@ -195,6 +209,23 @@ const Dashboard: React.FC = () => {
           )}
 
           <Box sx={{ display: "flex", alignItems: "center" }}>
+            {user?.role === "admin" && (
+              <IconButton color="inherit">
+                <Link
+                  className={`cursor-pointer`}
+                  href={"/admin"}
+                  sx={{
+                    alignItems: "center",
+                  }}
+                >
+                  <AdminPanelSettings sx={{ font: "20px", color: "white" }} />
+                  <Typography sx={{ fontSize: "12px", color: "white" }}>
+                    Admin Dashboard
+                  </Typography>
+                </Link>
+              </IconButton>
+            )}
+
             <IconButton color="inherit" onClick={() => setOpen(true)}>
               <AddIcon />
             </IconButton>
@@ -253,9 +284,7 @@ const Dashboard: React.FC = () => {
       </Dialog>
 
       {/* Forms Section */}
-      <Box sx={{ padding: 2 }}>
-        <Forms fetchAllForms={fetchAllForms} />
-      </Box>
+      <Box sx={{ padding: 2 }}>{user && <Forms userId={user._id} />}</Box>
     </Box>
   );
 };
