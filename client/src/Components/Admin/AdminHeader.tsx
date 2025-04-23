@@ -9,13 +9,15 @@ import {
   Box,
   useTheme,
   useMediaQuery,
+  Link,
 } from "@mui/material";
 import {
-  AccountCircle,
   MoreVert as MoreIcon,
   Group as GroupIcon,
   Description as DescriptionIcon,
   Logout as LogoutIcon,
+  AdminPanelSettings as AdminPanelSettingsIcon,
+  Dashboard as DashboardIcon, // <--- Added Dashboard Icon
 } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
@@ -51,6 +53,16 @@ const AdminHeader: React.FC = () => {
     handleMobileMenuClose();
   };
 
+  const handleNavigateAdmins = () => {
+    navigate("/admin/admins");
+    handleMobileMenuClose();
+  };
+
+  const handleNavigateDashboard = () => {
+    navigate("/");
+    handleMobileMenuClose();
+  };
+
   const handleProfileMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
   };
@@ -75,6 +87,10 @@ const AdminHeader: React.FC = () => {
       open={isMenuOpen}
       onClose={handleMenuClose}
     >
+      <MenuItem onClick={handleNavigateDashboard}>
+        <DashboardIcon sx={{ mr: 1 }} />
+        Dashboard
+      </MenuItem>
       <MenuItem onClick={handleNavigateUsers}>
         <GroupIcon sx={{ mr: 1 }} />
         Users
@@ -82,6 +98,10 @@ const AdminHeader: React.FC = () => {
       <MenuItem onClick={handleNavigateForms}>
         <DescriptionIcon sx={{ mr: 1 }} />
         Forms
+      </MenuItem>
+      <MenuItem onClick={handleNavigateAdmins}>
+        <AdminPanelSettingsIcon sx={{ mr: 1 }} />
+        Admins
       </MenuItem>
       <MenuItem onClick={handleLogout}>
         <LogoutIcon sx={{ mr: 1 }} />
@@ -98,6 +118,12 @@ const AdminHeader: React.FC = () => {
       open={isMobileMenuOpen}
       onClose={handleMobileMenuClose}
     >
+      <MenuItem onClick={handleNavigateDashboard}>
+        <IconButton color="inherit">
+          <DashboardIcon />
+        </IconButton>
+        <Typography variant="body2">Dashboard</Typography>
+      </MenuItem>
       <MenuItem onClick={handleNavigateUsers}>
         <IconButton color="inherit">
           <GroupIcon />
@@ -109,6 +135,12 @@ const AdminHeader: React.FC = () => {
           <DescriptionIcon />
         </IconButton>
         <Typography variant="body2">Forms</Typography>
+      </MenuItem>
+      <MenuItem onClick={handleNavigateAdmins}>
+        <IconButton color="inherit">
+          <AdminPanelSettingsIcon />
+        </IconButton>
+        <Typography variant="body2">Admins</Typography>
       </MenuItem>
       <MenuItem onClick={handleLogout}>
         <IconButton color="inherit">
@@ -130,13 +162,26 @@ const AdminHeader: React.FC = () => {
             component="div"
             sx={{ flexShrink: 0 }}
           >
-            Admin Dashboard
+            <Link
+              href="/admin"
+              underline="none"
+              color="inherit"
+              sx={{ fontWeight: "bold" }}
+            >
+              Admin Dashboard
+            </Link>
           </Typography>
 
           {/* Right-side icons */}
           <Box sx={{ display: "flex", alignItems: "center" }}>
             {!isMobile && (
               <>
+                <IconButton color="inherit" onClick={handleNavigateDashboard}>
+                  <DashboardIcon />
+                </IconButton>
+                <IconButton color="inherit" onClick={handleNavigateAdmins}>
+                  <AdminPanelSettingsIcon />
+                </IconButton>
                 <IconButton color="inherit" onClick={handleNavigateUsers}>
                   <GroupIcon />
                 </IconButton>

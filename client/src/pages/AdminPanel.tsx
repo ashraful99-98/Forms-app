@@ -6,11 +6,11 @@ import UserTable from "../Components/Admin/UserTable";
 const AdminPanel: React.FC = () => {
   return (
     <>
-      <AdminHeader />
+      {/* <AdminHeader /> */}
 
-      <Container maxWidth="lg">
-        <UserTable isTeam={false} />
-      </Container>
+      {/* <Container maxWidth="lg"> */}
+      <UserTable isTeam={false} />
+      {/* </Container> */}
     </>
   );
 };
