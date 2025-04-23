@@ -17,7 +17,6 @@ import {
   Box,
   useTheme,
   useMediaQuery,
-  Link,
 } from "@mui/material";
 
 import { styled, alpha } from "@mui/material/styles";
@@ -35,7 +34,6 @@ import { useAuth } from "../context/AuthContext";
 import { useFormContext } from "../context/FormContext";
 import Forms from "../Components/Form/Forms";
 
-// Styled Components
 const Search = styled("div")(({ theme }) => ({
   position: "relative",
   borderRadius: theme.shape.borderRadius,
@@ -43,10 +41,10 @@ const Search = styled("div")(({ theme }) => ({
   "&:hover": {
     backgroundColor: alpha(theme.palette.common.white, 0.25),
   },
-  marginLeft: theme.spacing(2),
+  marginLeft: 0,
   width: "100%",
   [theme.breakpoints.up("sm")]: {
-    marginLeft: theme.spacing(3),
+    marginLeft: theme.spacing(1),
     width: "auto",
   },
 }));
@@ -93,34 +91,23 @@ const Dashboard: React.FC = () => {
   const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
 
   useEffect(() => {
-    if (user?._id) {
-      fetchUserForms(user._id);
-    }
+    if (user?._id) fetchUserForms(user._id);
   }, [user, fetchUserForms]);
 
   const handleLogout = async () => {
     if (window.confirm("Really want to logout?")) {
       await logout();
       navigate("/");
-      // navigate("/login");
     }
   };
 
   const handleCreateForm = async () => {
     if (!formName.trim() || !user?._id) return;
-
     const newForm = await createForm({
       name: formName,
       description: formDescription,
       createdBy: user._id,
     });
-
-    console.log("Creating form with:", {
-      createdBy: user?._id,
-      name: formName,
-      description: formDescription,
-    });
-
     if (newForm) {
       setOpen(false);
       setFormName("");
@@ -132,10 +119,10 @@ const Dashboard: React.FC = () => {
   const renderMenu = (
     <Menu
       anchorEl={anchorEl}
-      anchorOrigin={{ vertical: "top", horizontal: "right" }}
-      transformOrigin={{ vertical: "top", horizontal: "right" }}
       open={isMenuOpen}
       onClose={() => setAnchorEl(null)}
+      anchorOrigin={{ vertical: "top", horizontal: "right" }}
+      transformOrigin={{ vertical: "top", horizontal: "right" }}
     >
       <MenuItem onClick={() => setAnchorEl(null)}>Profile</MenuItem>
       <MenuItem onClick={handleLogout}>Logout</MenuItem>
@@ -145,10 +132,10 @@ const Dashboard: React.FC = () => {
   const renderMobileMenu = (
     <Menu
       anchorEl={mobileMoreAnchorEl}
-      anchorOrigin={{ vertical: "top", horizontal: "right" }}
-      transformOrigin={{ vertical: "top", horizontal: "right" }}
       open={isMobileMenuOpen}
       onClose={() => setMobileMoreAnchorEl(null)}
+      anchorOrigin={{ vertical: "top", horizontal: "right" }}
+      transformOrigin={{ vertical: "top", horizontal: "right" }}
     >
       <MenuItem onClick={() => setOpen(true)}>
         <IconButton color="inherit">
@@ -156,18 +143,14 @@ const Dashboard: React.FC = () => {
         </IconButton>
         <p>Create Form</p>
       </MenuItem>
-
       {user?.role === "admin" && (
-        <MenuItem href="/admin">
+        <MenuItem onClick={() => navigate("/admin")}>
           <IconButton color="inherit">
-            <Link className={`cursor-pointer`} href={"/admin"}>
-              <AdminPanelSettings sx={{ font: "20px" }} />
-            </Link>
+            <AdminPanelSettings />
           </IconButton>
-          <p>Admin Dashboard</p>
+          <p>Admin Panel</p>
         </MenuItem>
       )}
-
       <MenuItem onClick={() => setAnchorEl(null)}>
         <IconButton color="inherit">
           <AccountCircle />
@@ -186,105 +169,108 @@ const Dashboard: React.FC = () => {
   return (
     <Box sx={{ flexGrow: 1 }}>
       <AppBar position="static">
-        <Toolbar sx={{ justifyContent: "space-between" }}>
+        <Toolbar sx={{ justifyContent: "space-between", flexWrap: "wrap" }}>
           <Box sx={{ display: "flex", alignItems: "center" }}>
-            <IconButton edge="start" color="inherit">
+            <IconButton
+              edge="start"
+              color="inherit"
+              onClick={() => navigate("/")}
+            >
               <HomeIcon />
             </IconButton>
             <Typography variant="h6" noWrap>
-              Dashboard Forms
+              Dashboard
             </Typography>
           </Box>
 
           {!isMobile && (
-            <Search>
-              <SearchIconWrapper>
-                <SearchIcon />
-              </SearchIconWrapper>
-              <StyledInputBase
-                placeholder="Search…"
-                inputProps={{ "aria-label": "search" }}
-              />
-            </Search>
+            <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+              <Search>
+                <SearchIconWrapper>
+                  <SearchIcon />
+                </SearchIconWrapper>
+                <StyledInputBase
+                  placeholder="Search…"
+                  inputProps={{ "aria-label": "search" }}
+                />
+              </Search>
+              {user?.role === "admin" && (
+                <Button
+                  variant="outlined"
+                  color="inherit"
+                  onClick={() => navigate("/admin")}
+                  startIcon={<AdminPanelSettings />}
+                >
+                  Admin Panel
+                </Button>
+              )}
+              <Button
+                variant="contained"
+                color="inherit"
+                sx={{ color: "#000" }}
+                onClick={() => setOpen(true)}
+                startIcon={<AddIcon />}
+              >
+                Create Form
+              </Button>
+              <IconButton
+                color="inherit"
+                onClick={(e) => setAnchorEl(e.currentTarget)}
+              >
+                <AccountCircle />
+              </IconButton>
+            </Box>
           )}
 
-          <Box sx={{ display: "flex", alignItems: "center" }}>
-            {user?.role === "admin" && (
-              <IconButton color="inherit">
-                <Link
-                  className={`cursor-pointer`}
-                  href={"/admin"}
-                  sx={{
-                    alignItems: "center",
-                  }}
-                >
-                  <AdminPanelSettings sx={{ font: "20px", color: "white" }} />
-                  <Typography sx={{ fontSize: "12px", color: "white" }}>
-                    Admin Dashboard
-                  </Typography>
-                </Link>
-              </IconButton>
-            )}
-
-            <IconButton color="inherit" onClick={() => setOpen(true)}>
-              <AddIcon />
-            </IconButton>
-            <IconButton
-              color="inherit"
-              onClick={(e) => setAnchorEl(e.currentTarget)}
-            >
-              <AccountCircle />
-            </IconButton>
-            {isMobile && (
+          {isMobile && (
+            <Box>
               <IconButton
                 color="inherit"
                 onClick={(e) => setMobileMoreAnchorEl(e.currentTarget)}
               >
                 <MoreIcon />
               </IconButton>
-            )}
-          </Box>
+            </Box>
+          )}
         </Toolbar>
       </AppBar>
 
       {renderMenu}
       {renderMobileMenu}
 
-      {/* Dialog for Creating Form */}
       <Dialog open={open} onClose={() => setOpen(false)}>
         <DialogTitle>Create New Form</DialogTitle>
         <DialogContent>
           <DialogContentText>
-            Give your form a title and description.
+            To create a form, enter a name and description.
           </DialogContentText>
           <TextField
             autoFocus
             margin="dense"
-            label="Form Title"
+            label="Form Name"
+            type="text"
             fullWidth
+            variant="outlined"
             value={formName}
             onChange={(e) => setFormName(e.target.value)}
           />
           <TextField
             margin="dense"
             label="Description"
+            type="text"
             fullWidth
+            variant="outlined"
             value={formDescription}
             onChange={(e) => setFormDescription(e.target.value)}
           />
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setOpen(false)} color="primary">
-            Cancel
-          </Button>
-          <Button onClick={handleCreateForm} color="primary">
-            Create
-          </Button>
+          <Button onClick={() => setOpen(false)}>Cancel</Button>
+          <Button onClick={handleCreateForm}>Create</Button>
         </DialogActions>
       </Dialog>
 
-      {/* Forms Section */}
-      <Box sx={{ padding: 2 }}>{user && <Forms userId={user._id} />}</Box>
+      <Box sx={{ p: 2 }}>{user && <Forms userId={user._id} />}</Box>
     </Box>
   );
 };
