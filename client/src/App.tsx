@@ -14,6 +14,7 @@ import { FormProvider } from "./context/FormContext";
 import Footer from "./pages/Footer";
 import AdminPanel from "./pages/AdminPanel";
 import UserTable from "./Components/Admin/UserTable";
+import FormTable from "./Components/Admin/FormTable";
 
 const App: React.FC = () => {
   return (
@@ -42,6 +43,13 @@ const App: React.FC = () => {
                   path="/admin/users"
                   element={<UserTable isTeam={false} />}
                 />
+
+                <Route
+                  path="/admin/admins"
+                  element={<UserTable isTeam={true} />}
+                />
+
+                <Route path="/admin/forms" element={<FormTable />} />
               </Route>
             </Routes>
           </div>

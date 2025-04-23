@@ -23,11 +23,25 @@ import loginImg from "../images/login.png";
 const Login: React.FC = () => {
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
-  const { login } = useAuth();
+  const { login, user } = useAuth();
   const navigate = useNavigate();
   const theme = useTheme();
   const [error, setError] = useState<string>("");
   const [message, setMessage] = useState<string>("");
+
+  // const handleSubmit = async (e: React.FormEvent) => {
+  //   e.preventDefault();
+  //   setError("");
+  //   setMessage("");
+
+  //   try {
+  //     await login(email, password);
+  //     setMessage("Login successful!");
+  //     navigate("/");
+  //   } catch (err: any) {
+  //     setError(err?.message || "Login failed. Please try again.");
+  //   }
+  // };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -35,7 +49,12 @@ const Login: React.FC = () => {
     setMessage("");
 
     try {
-      await login(email, password);
+      await login(email, password); // assume login sets the user context internally
+      if (user && user.isBlocked) {
+        setError("Your account is blocked.");
+        return; // don't navigate
+      }
+
       setMessage("Login successful!");
       navigate("/");
     } catch (err: any) {

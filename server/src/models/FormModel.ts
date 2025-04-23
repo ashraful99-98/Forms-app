@@ -1,5 +1,6 @@
 import mongoose, { Document, Schema } from 'mongoose';
 import mongoosePaginate from 'mongoose-paginate-v2';
+import { IUser } from './User';
 
 export interface IOption {
   optionText: string;
@@ -14,7 +15,7 @@ export interface IQuestion {
 }
 
 export interface IForm extends Document {
-  createdBy: mongoose.Types.ObjectId;
+  createdBy: mongoose.Types.ObjectId | IUser; 
   name: string;
   description: string;
   questions: IQuestion[];

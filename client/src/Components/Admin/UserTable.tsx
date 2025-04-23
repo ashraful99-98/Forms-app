@@ -1,7 +1,14 @@
 import React, { FC, useEffect, useState } from "react";
-import { Box, Button, Modal, Snackbar, Alert } from "@mui/material";
+import {
+  Box,
+  Button,
+  Modal,
+  Snackbar,
+  Alert,
+  Typography,
+  Container,
+} from "@mui/material";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
-
 import { useAuth } from "../../context/AuthContext";
 import {
   AddBusinessRounded,
@@ -9,22 +16,32 @@ import {
   Block,
   Delete,
   Mail,
+  LockOpen,
 } from "@mui/icons-material";
+import AdminHeader from "./AdminHeader";
 
 type Props = {
   isTeam: boolean;
 };
 
 const UserTable: FC<Props> = ({ isTeam }) => {
-  const { users, user, fetchAllUsers, updateUserRole, blockUser, unblockUser } =
-    useAuth();
+  const {
+    users,
+    user,
+    fetchAllUsers,
+    updateUserRole,
+    blockUser,
+    unblockUser,
+    deleteUser,
+  } = useAuth();
 
-  const [openDeleteModal, setOpenDeleteModal] = useState(false);
-  const [openRoleModal, setOpenRoleModal] = useState(false);
+  const [openModal, setOpenModal] = useState(false);
+  const [modalAction, setModalAction] = useState<
+    "block" | "unblock" | "delete" | "updateRole"
+  >("block");
   const [selectedUserId, setSelectedUserId] = useState("");
   const [selectedUniqueId, setSelectedUniqueId] = useState("");
   const [selectedUserRole, setSelectedUserRole] = useState("");
-
   const [alert, setAlert] = useState<{
     open: boolean;
     message: string;
@@ -35,102 +52,125 @@ const UserTable: FC<Props> = ({ isTeam }) => {
     fetchAllUsers();
   }, [fetchAllUsers]);
 
-  const handleDeleteUser = async () => {
+  const handleUserAction = async () => {
     try {
-      await blockUser(selectedUserId);
-      setAlert({
-        open: true,
-        message: "User blocked successfully!",
-        severity: "success",
-      });
-      setOpenDeleteModal(false);
+      if (modalAction === "block") {
+        await blockUser(selectedUserId);
+        setAlert({
+          open: true,
+          message: "User blocked successfully!",
+          severity: "success",
+        });
+      } else if (modalAction === "unblock") {
+        await unblockUser(selectedUserId);
+        setAlert({
+          open: true,
+          message: "User unblocked successfully!",
+          severity: "success",
+        });
+      } else if (modalAction === "delete") {
+        await deleteUser(selectedUserId);
+        setAlert({
+          open: true,
+          message: "User deleted successfully!",
+          severity: "success",
+        });
+      } else if (modalAction === "updateRole") {
+        await updateUserRole(selectedUniqueId, selectedUserRole);
+        setAlert({
+          open: true,
+          message: "User role updated successfully!",
+          severity: "success",
+        });
+      }
+      setOpenModal(false);
+      fetchAllUsers();
     } catch (error) {
       console.error(error);
-      setAlert({
-        open: true,
-        message: "Failed to block user.",
-        severity: "error",
-      });
-    }
-  };
-
-  const handleUpdateRole = async () => {
-    try {
-      await updateUserRole(selectedUniqueId, selectedUserRole);
-      setAlert({
-        open: true,
-        message: "User role updated successfully!",
-        severity: "success",
-      });
-      setOpenRoleModal(false);
-    } catch (error) {
-      console.error(error);
-      setAlert({
-        open: true,
-        message: "Failed to update user role.",
-        severity: "error",
-      });
+      setAlert({ open: true, message: "Action failed.", severity: "error" });
     }
   };
 
   const columns: GridColDef[] = [
     { field: "id", headerName: "ID", flex: 0.3 },
     { field: "name", headerName: "Name", flex: 0.5 },
-    { field: "email", headerName: "Email", flex: 0.5 },
-    { field: "role", headerName: "Role", flex: 0.5 },
+    { field: "email", headerName: "Email", flex: 0.6 },
+    { field: "role", headerName: "Role", flex: 0.4 },
+    { field: "status", headerName: "Status", flex: 0.4 },
     {
       field: "updateRole",
-      headerName: "Update Role",
-      flex: 0.2,
+      headerName: "Promote to Admin",
+      flex: 0.5,
       renderCell: (params) => {
         const row = params.row;
         return row.role === "admin" ? (
-          <AdminPanelSettingsOutlined sx={{ fontSize: 22, color: "#1976d2" }} />
-        ) : user?.role === "moderator" ? (
+          <AdminPanelSettingsOutlined sx={{ fontSize: 24, color: "#388e3c" }} />
+        ) : user?.role !== "moderator" ? (
           <Button
             onClick={() => {
-              setOpenRoleModal(true);
+              setOpenModal(true);
+              setModalAction("updateRole");
               setSelectedUniqueId(row.uniqueId);
-              setSelectedUserRole("moderator");
+              setSelectedUserRole("admin");
             }}
           >
-            <Block sx={{ fontSize: 22, color: "#f57c00" }} />
+            <AddBusinessRounded sx={{ fontSize: 24, color: "#1976d2" }} />
+          </Button>
+        ) : null;
+      },
+    },
+    {
+      field: "blockUnblock",
+      headerName: "Block / Unblock",
+      flex: 0.5,
+      renderCell: (params) => {
+        const row = params.row;
+        return row.isBlocked ? (
+          <Button
+            onClick={() => {
+              setOpenModal(true);
+              setSelectedUserId(row.uniqueId);
+              setModalAction("unblock");
+            }}
+          >
+            <LockOpen sx={{ fontSize: 24, color: "#43a047" }} />
           </Button>
         ) : (
           <Button
             onClick={() => {
-              setOpenRoleModal(true);
-              setSelectedUniqueId(row.uniqueId);
-              setSelectedUserRole("user");
+              setOpenModal(true);
+              setSelectedUserId(row.uniqueId);
+              setModalAction("block");
             }}
           >
-            <AddBusinessRounded sx={{ fontSize: 22, color: "#2e7d32" }} />
+            <Block sx={{ fontSize: 24, color: "#e53935" }} />
           </Button>
         );
       },
     },
     {
       field: "delete",
-      headerName: "Block",
-      flex: 0.2,
+      headerName: "Delete",
+      flex: 0.4,
       renderCell: (params) => (
         <Button
           onClick={() => {
-            setOpenDeleteModal(true);
+            setOpenModal(true);
             setSelectedUserId(params.row.uniqueId);
+            setModalAction("delete");
           }}
         >
-          <Delete sx={{ fontSize: 22, color: "#d32f2f" }} />
+          <Delete sx={{ fontSize: 24, color: "#d32f2f" }} />
         </Button>
       ),
     },
     {
       field: "emailAction",
       headerName: "Email",
-      flex: 0.2,
+      flex: 0.4,
       renderCell: (params) => (
         <a href={`mailto:${params.row.email}`}>
-          <Mail sx={{ fontSize: 22, color: "#0288d1" }} />
+          <Mail sx={{ fontSize: 24, color: "#0288d1" }} />
         </a>
       ),
     },
@@ -146,162 +186,135 @@ const UserTable: FC<Props> = ({ isTeam }) => {
       name: user.name,
       email: user.email,
       role: user.role,
+      isBlocked: user.isBlocked,
+      status: user.isBlocked ? "Blocked" : "Active",
     }));
 
   return (
-    <div
-      style={{
-        // backgroundColor: "#f5f7fa",
-        minHeight: "100vh",
-        paddingTop: 30,
-        paddingBottom: 40,
-      }}
-    >
-      <Box m="20px">
-        <Box
-          m="40px 0 0 0"
-          height="80vh"
-          sx={{
-            "& .MuiDataGrid-root": { border: "1px solid #f5f7fa" },
-            "& .MuiDataGrid-HeadersContainer": {
-              backgroundColor: "#1976d2",
-              color: "#000",
-              fontSize: "16px",
-              fontWeight: "bold",
-            },
-            "& .MuiDataGrid-columnHeaders": {
-              backgroundColor: "#1976d2",
-              color: "#000",
-              fontSize: "16px",
-              fontWeight: "bold",
-            },
-            "& .MuiDataGrid-row": {
-              backgroundColor: "#f2f2f2",
-              color: "#333",
-            },
-            "& .MuiDataGrid-footerContainer": {
-              backgroundColor: "#1976d2",
-              color: "#fff",
-              borderTop: "none",
-            },
-            "& .MuiDataGrid-cell": {
-              borderBottom: "1px solid #ccc",
-            },
-            "& .MuiDataGrid-virtualScroller": {
-              backgroundColor: "#f5f7fa",
-            },
+    <>
+      <AdminHeader />
+
+      <Container maxWidth="xl">
+        <div
+          style={{
+            minHeight: "100vh",
+            paddingTop: 30,
+            paddingBottom: 40,
+            // backgroundColor: "#fafafa",
           }}
         >
-          <DataGrid rows={rows} columns={columns} />
-        </Box>
+          <Box m="20px">
+            <Typography variant="h4" fontWeight="bold" color="primary" mb={2}>
+              {isTeam ? "Team Users" : "All Users"}
+            </Typography>
 
-        {/* Delete User Modal */}
-        <Modal open={openDeleteModal} onClose={() => setOpenDeleteModal(false)}>
-          <Box
-            sx={{
-              position: "absolute",
-              top: "50%",
-              left: "50%",
-              transform: "translate(-50%, -50%)",
-              backgroundColor: "#fff",
-              color: "#333",
-              padding: 4,
-              borderRadius: 2,
-              width: 400,
-              boxShadow: 24,
-            }}
-          >
-            <h2>Block User</h2>
-            <p>Are you sure you want to block this user?</p>
-            <Box mt={4} display="flex" justifyContent="space-between">
-              <Button
-                variant="contained"
-                color="primary"
-                onClick={() => setOpenDeleteModal(false)}
-              >
-                Cancel
-              </Button>
-              <Button
-                variant="contained"
-                color="error"
-                onClick={handleDeleteUser}
-              >
-                Block
-              </Button>
+            <Box
+              m="20px 0"
+              height="80vh"
+              sx={{
+                "& .MuiDataGrid-root": { border: "1px solid #e0e0e0" },
+                "& .MuiDataGrid-columnHeaders": {
+                  backgroundColor: "#1565c0",
+                  color: "#000",
+                  fontSize: "16px",
+                  fontWeight: "bold",
+                },
+                "& .MuiDataGrid-row": {
+                  backgroundColor: "#f9f9f9",
+                  "&:hover": { backgroundColor: "#f1f1f1" },
+                },
+                "& .MuiDataGrid-cell": {
+                  color: "#424242",
+                },
+                "& .MuiDataGrid-footerContainer": {
+                  backgroundColor: "#1565c0",
+                  color: "#fff",
+                },
+              }}
+            >
+              <DataGrid
+                rows={rows}
+                columns={columns}
+                pageSizeOptions={[5, 10, 20]}
+              />
             </Box>
-          </Box>
-        </Modal>
 
-        {/* Update Role Modal */}
-        <Modal open={openRoleModal} onClose={() => setOpenRoleModal(false)}>
-          <Box
-            sx={{
-              position: "absolute",
-              top: "50%",
-              left: "50%",
-              transform: "translate(-50%, -50%)",
-              backgroundColor: "#fff",
-              color: "#333",
-              padding: 4,
-              borderRadius: 2,
-              width: 400,
-              boxShadow: 24,
-            }}
-          >
-            <h2>Update User Role</h2>
-            <Box mt={2}>
-              <select
-                value={selectedUserRole}
-                onChange={(e) => setSelectedUserRole(e.target.value)}
-                style={{
-                  width: "100%",
-                  padding: "10px",
-                  borderRadius: "8px",
-                  border: "1px solid #ccc",
-                  marginBottom: "20px",
+            {/* Modal */}
+            <Modal open={openModal} onClose={() => setOpenModal(false)}>
+              <Box
+                sx={{
+                  position: "absolute",
+                  top: "50%",
+                  left: "50%",
+                  transform: "translate(-50%, -50%)",
+                  backgroundColor: "#fff",
+                  padding: 4,
+                  borderRadius: 2,
+                  width: 400,
+                  boxShadow: 24,
                 }}
               >
-                <option value="student">User</option>
-                {/* <option value="moderator">Moderator</option> */}
-                <option value="admin">Admin</option>
-              </select>
-              <Box display="flex" justifyContent="space-between">
-                <Button
-                  variant="contained"
-                  color="primary"
-                  onClick={() => setOpenRoleModal(false)}
-                >
-                  Cancel
-                </Button>
-                <Button
-                  variant="contained"
-                  color="success"
-                  onClick={handleUpdateRole}
-                >
-                  Update
-                </Button>
+                <Typography variant="h6" mb={2}>
+                  {modalAction === "block"
+                    ? "Block User"
+                    : modalAction === "unblock"
+                    ? "Unblock User"
+                    : modalAction === "delete"
+                    ? "Delete User"
+                    : "Promote User"}
+                </Typography>
+                <Typography mb={4}>
+                  Are you sure you want to{" "}
+                  {modalAction === "updateRole" ? "promote" : modalAction} this
+                  user?
+                </Typography>
+                <Box mt={2} display="flex" justifyContent="space-between">
+                  <Button
+                    variant="outlined"
+                    color="secondary"
+                    onClick={() => setOpenModal(false)}
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    variant="contained"
+                    color={
+                      modalAction === "delete"
+                        ? "error"
+                        : modalAction === "updateRole"
+                        ? "success"
+                        : "warning"
+                    }
+                    onClick={handleUserAction}
+                  >
+                    {modalAction === "updateRole"
+                      ? "Promote"
+                      : modalAction.charAt(0).toUpperCase() +
+                        modalAction.slice(1)}
+                  </Button>
+                </Box>
               </Box>
-            </Box>
-          </Box>
-        </Modal>
+            </Modal>
 
-        {/* Snackbar Alert */}
-        <Snackbar
-          open={alert.open}
-          autoHideDuration={4000}
-          onClose={() => setAlert({ ...alert, open: false })}
-          anchorOrigin={{ vertical: "top", horizontal: "center" }}
-        >
-          <Alert
-            onClose={() => setAlert({ ...alert, open: false })}
-            severity={alert.severity}
-            sx={{ width: "100%" }}
-          >
-            {alert.message}
-          </Alert>
-        </Snackbar>
-      </Box>
-    </div>
+            {/* Snackbar */}
+            <Snackbar
+              open={alert.open}
+              autoHideDuration={4000}
+              onClose={() => setAlert({ ...alert, open: false })}
+              anchorOrigin={{ vertical: "top", horizontal: "center" }}
+            >
+              <Alert
+                onClose={() => setAlert({ ...alert, open: false })}
+                severity={alert.severity}
+                sx={{ width: "100%" }}
+              >
+                {alert.message}
+              </Alert>
+            </Snackbar>
+          </Box>
+        </div>
+      </Container>
+    </>
   );
 };
 
