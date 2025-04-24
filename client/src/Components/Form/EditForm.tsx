@@ -141,8 +141,124 @@ const EditForm: React.FC = () => {
   const sendForm = () => handleClickOpen();
 
   return (
+    // <div>
+    //   {formDetails?.createdBy === user?._id ? (
+    //     <>
+    //       <div className={classes.root}>
+    //         <AppBar position="static" color="default" elevation={2}>
+    //           <Toolbar className={classes.toolbar}>
+    //             <IconButton edge="start" style={{ color: "#140078" }}>
+    //               <ViewListIcon />
+    //             </IconButton>
+    //             <Typography
+    //               variant="h6"
+    //               noWrap
+    //               style={{ marginTop: "8.5px", color: "black" }}
+    //             >
+    //               {formDetails?.name}
+    //             </Typography>
+    //             <IconButton>
+    //               <StarBorderIcon />
+    //             </IconButton>
+
+    //             <Tabs
+    //               className={classes.title}
+    //               value={value}
+    //               onChange={handleChange}
+    //               indicatorColor="primary"
+    //               textColor="primary"
+    //               centered
+    //             >
+    //               <Tab label="Questions" />
+    //               <Tab label="Responses" />
+    //             </Tabs>
+
+    //             <IconButton onClick={sendForm}>
+    //               <SendIcon />
+    //             </IconButton>
+    //             <IconButton>
+    //               <PaletteIcon />
+    //             </IconButton>
+    //             <IconButton>
+    //               <VisibilityIcon />
+    //             </IconButton>
+    //             <IconButton>
+    //               <SettingsIcon />
+    //             </IconButton>
+    //             <IconButton edge="end">
+    //               <MoreIcon />
+    //             </IconButton>
+    //             <IconButton edge="end">
+    //               <AccountCircleIcon />
+    //             </IconButton>
+    //           </Toolbar>
+    //         </AppBar>
+    //       </div>
+
+    //       <Dialog open={open} onClose={handleClose}>
+    //         <DialogTitle>Copy and share link.</DialogTitle>
+    //         <DialogContent>
+    //           <Paper className={classes.paper}>
+    //             <Grid
+    //               container
+    //               justifyContent="space-between"
+    //               alignItems="center"
+    //             >
+    //               <Typography variant="body1">
+    //                 {`${window.location.origin}/s/${formDetails._id}`}
+    //               </Typography>
+    //               <IconButton
+    //                 className={classes.button}
+    //                 size="medium"
+    //                 onClick={clipToClipboard}
+    //               >
+    //                 <FilterNoneIcon />
+    //               </IconButton>
+    //             </Grid>
+    //           </Paper>
+    //           <DialogContentText />
+    //         </DialogContent>
+    //         <DialogActions>
+    //           <Button onClick={handleClose} color="primary">
+    //             Cancel
+    //           </Button>
+    //         </DialogActions>
+    //       </Dialog>
+
+    //       <Snackbar
+    //         anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
+    //         open={openOfAlert}
+    //         autoHideDuration={3000}
+    //         onClose={handleCloseOfAlert}
+    //         message="Copied to clipboard"
+    //         action={
+    //           <IconButton
+    //             size="small"
+    //             aria-label="close"
+    //             color="inherit"
+    //             onClick={handleCloseOfAlert}
+    //           >
+    //             <CloseIcon fontSize="small" />
+    //           </IconButton>
+    //         }
+    //       />
+    //       <TabPanel value={value} index={0}>
+    //         <QuestionsTab formData={formDetails as FormDataType} />
+    //       </TabPanel>
+    //       <TabPanel value={value} index={1}>
+    //         {/* <ResponseTab formData={formDetails as FormType} formId={formID} /> */}
+    //         {/* <ResponseTab formData={formDetails as FormType} formId={formID} /> */}
+    //       </TabPanel>
+    //     </>
+    //   ) : (
+    //     <p>You're not the owner of the form</p>
+    //   )}
+    // </div>
+
     <div>
-      {formDetails?.createdBy === user?._id ? (
+      {user &&
+      (user.role === "admin" ||
+        (user.role === "user" && formDetails?.createdBy === user._id)) ? (
         <>
           <div className={classes.root}>
             <AppBar position="static" color="default" elevation={2}>
@@ -242,16 +358,20 @@ const EditForm: React.FC = () => {
               </IconButton>
             }
           />
+
           <TabPanel value={value} index={0}>
             <QuestionsTab formData={formDetails as FormDataType} />
           </TabPanel>
           <TabPanel value={value} index={1}>
             {/* <ResponseTab formData={formDetails as FormType} formId={formID} /> */}
-            {/* <ResponseTab formData={formDetails as FormType} formId={formID} /> */}
           </TabPanel>
         </>
       ) : (
-        <p>You're not the owner of the form</p>
+        <Box mt={4} textAlign="center">
+          <Typography variant="h6" color="error">
+            You're not the owner of the form
+          </Typography>
+        </Box>
       )}
     </div>
   );

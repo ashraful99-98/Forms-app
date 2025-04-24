@@ -19,6 +19,7 @@ import {
   LockOpen,
 } from "@mui/icons-material";
 import AdminHeader from "./AdminHeader";
+import { format } from "timeago.js";
 
 type Props = {
   isTeam: boolean;
@@ -101,7 +102,7 @@ const UserTable: FC<Props> = ({ isTeam }) => {
       field: "createdAt",
       headerName: "Created At",
       flex: 0.5,
-      renderCell: (params) => new Date(params.value).toLocaleDateString(),
+      // renderCell: (params) => new Date(params.value).toLocaleDateString(),
     },
     {
       field: "updateRole",
@@ -194,7 +195,8 @@ const UserTable: FC<Props> = ({ isTeam }) => {
       role: user.role,
       isBlocked: user.isBlocked,
       status: user.isBlocked ? "Blocked" : "Active",
-      createdAt: user.createdAt, // Assuming 'createdAt' exists on the user object
+      // createdAt: user.createdAt,
+      createdAt: format(user.createdAt),
     }));
 
   return (

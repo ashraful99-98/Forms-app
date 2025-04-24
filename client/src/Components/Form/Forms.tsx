@@ -50,8 +50,15 @@
 // };
 
 // export default Forms;
+
 import React, { useEffect, useState } from "react";
-import { Box, Grid, CircularProgress, Container } from "@mui/material";
+import {
+  Box,
+  Grid,
+  CircularProgress,
+  Container,
+  Typography,
+} from "@mui/material";
 import OneForm from "./OneForm";
 import { FormType, useFormContext } from "../../context/FormContext";
 import { useAuth } from "../../context/AuthContext";
@@ -65,39 +72,16 @@ const Forms: React.FC<FormsProps> = ({ userId }) => {
   const { user } = useAuth();
   const [loading, setLoading] = useState(true);
 
-  // useEffect(() => {
-  //   const fetchForms = async () => {
-  //     try {
-  //       if (user?.role === "admin") {
-  //         await fetchAllForms();
-  //       } else if (user?.role === "user" && userId) {
-  //         await fetchUserForms(userId);
-  //       }
-  //     } catch (err) {
-  //       console.error("Failed to fetch forms:", err);
-  //     } finally {
-  //       setLoading(false);
-  //     }
-  //   };
-  //   if (user) {
-  //     fetchForms();
-  //   }
-  // }, [user, userId, fetchAllForms, fetchUserForms]);
-
   useEffect(() => {
     const fetchForms = async () => {
       if (!user) return;
 
+      setLoading(true);
       try {
-        setLoading(true);
-
-        // If forms are already fetched, don't fetch again
-        if (forms.length === 0) {
-          if (user.role === "admin") {
-            await fetchAllForms();
-          } else if (user.role === "user" && userId) {
-            await fetchUserForms(userId);
-          }
+        if (user.role === "admin") {
+          await fetchAllForms();
+        } else if (user.role === "user") {
+          await fetchUserForms(user._id); // use logged-in user's own ID
         }
       } catch (error) {
         console.error("Failed to fetch forms:", error);
@@ -107,15 +91,8 @@ const Forms: React.FC<FormsProps> = ({ userId }) => {
     };
 
     fetchForms();
-  }, [
-    user?._id,
-    user?.role,
-    userId,
-    fetchAllForms,
-    fetchUserForms,
-    user,
-    forms.length,
-  ]);
+  }, [user?.role, user?._id, fetchAllForms, fetchUserForms]);
+
   return (
     <Container maxWidth="lg">
       {loading ? (
@@ -123,13 +100,31 @@ const Forms: React.FC<FormsProps> = ({ userId }) => {
           <CircularProgress />
         </Box>
       ) : (
-        <Box p={2}>
-          <Grid container spacing={3}>
-            {forms.map((form: FormType) => (
-              <OneForm key={form._id} form={form} />
-            ))}
-          </Grid>
-        </Box>
+        <>
+          <Box mt={4} mb={2}>
+            <Typography variant="h5" align="center">
+              {user?.role === "admin" ? "All Forms" : "My Forms"}
+            </Typography>
+          </Box>
+
+          {forms.length > 0 ? (
+            <Grid container spacing={3}>
+              {forms.map((form: FormType) => (
+                <Grid key={form._id}>
+                  <OneForm form={form} />
+                </Grid>
+              ))}
+            </Grid>
+          ) : (
+            <Box display="flex" justifyContent="center" mt={4}>
+              <Typography variant="h6">
+                {user?.role === "admin"
+                  ? "No forms available."
+                  : "You haven't created any forms yet."}
+              </Typography>
+            </Box>
+          )}
+        </>
       )}
     </Container>
   );

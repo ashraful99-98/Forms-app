@@ -13,6 +13,7 @@ import { Delete } from "@mui/icons-material";
 import { useAuth } from "../../context/AuthContext";
 import { useFormContext } from "../../context/FormContext";
 import AdminHeader from "./AdminHeader";
+import { format } from "timeago.js";
 
 const FormTable: FC = () => {
   const { forms, fetchAllForms, deleteForm } = useFormContext();
@@ -85,9 +86,10 @@ const FormTable: FC = () => {
     description: form.description,
     questionCount: form.questions ? form.questions.length : 0,
     createdBy: form.createdBy || "Unknown",
-    createdAt: form.createdAt
-      ? new Date(form.createdAt).toLocaleDateString()
-      : "N/A",
+    // createdAt: form.createdAt
+    //   ? new Date(form.createdAt).toLocaleDateString()
+    //   : "N/A",
+    createdAt: format(form.createdAt),
   }));
 
   return (

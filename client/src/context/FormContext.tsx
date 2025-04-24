@@ -18,21 +18,9 @@ export interface FormType {
   questions: any[];
   formType?: string;
   stared?: boolean;
-  createdAt?: string;
-  updatedAt?: string;
+  createdAt: string;
+  updatedAt: string;
 }
-
-// export interface FormType {
-//   _id?: string;
-//   name: string;
-//   description: string;
-//   createdBy: string;
-//   questions: any[];
-//   formType?: string;
-//   stared?: boolean;
-//   createdAt?: string;
-//   updatedAt?: string;
-// }
 
 export interface ResponseItem {
   questionId: string;
