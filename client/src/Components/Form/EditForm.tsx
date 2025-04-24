@@ -16,6 +16,10 @@ import {
   Paper,
   Grid,
   Box,
+  Menu,
+  MenuItem,
+  useTheme,
+  useMediaQuery,
 } from "@mui/material";
 
 import {
@@ -30,27 +34,18 @@ import {
   FilterNone as FilterNoneIcon,
   Close as CloseIcon,
 } from "@mui/icons-material";
-import { SnackbarCloseReason } from "@mui/material";
 
-import { useParams } from "react-router-dom";
+import { SnackbarCloseReason } from "@mui/material";
+import { useParams, useNavigate } from "react-router-dom";
 import PropTypes from "prop-types";
 import { makeStyles } from "@mui/styles";
 import { useFormContext } from "../../context/FormContext";
 import { useAuth } from "../../context/AuthContext";
 import QuestionsTab, { FormDataType } from "./QuestionsTab";
-import ResponseTab, { ResponseType } from "../Response/ResponseTab";
+import ResponseTab from "../Response/ResponseTab";
+import { FormType } from "../../context/FormContext";
 
 const useStyles = makeStyles({
-  root: {
-    flexGrow: 1,
-  },
-  toolbar: {
-    display: "flex",
-    alignItems: "center",
-  },
-  title: {
-    flexGrow: 1,
-  },
   paper: {
     padding: "16px",
     marginTop: "8px",
@@ -61,12 +56,6 @@ const useStyles = makeStyles({
   },
 });
 
-// interface FormType {
-//   _id?: string;
-//   name?: string;
-//   createdBy?: string;
-//   [key: string]: any;
-// }
 interface QuestionType {
   questionText: string;
   questionType: string;
@@ -74,24 +63,41 @@ interface QuestionType {
   required: boolean;
 }
 
-interface FormType {
-  _id?: string;
-  name?: string;
-  createdBy?: string;
-  description?: string;
-  questions?: QuestionType[];
-}
 const EditForm: React.FC = () => {
   const classes = useStyles();
   const { formId } = useParams<{ formId: string }>();
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
   const { fetchFormById } = useFormContext();
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+  const navigate = useNavigate();
 
   const [value, setValue] = useState<number>(0);
   const [open, setOpen] = useState<boolean>(false);
   const [formID, setFormID] = useState<string>("");
-  const [formDetails, setFormDetails] = useState<FormType>({});
+  // const [formDetails, setFormDetails] = useState<FormType>({});
+
+  const getEmptyForm = (): FormType => ({
+    _id: "",
+    name: "",
+    description: "",
+    createdBy: "",
+    questions: [],
+    formType: "",
+    stared: false,
+    createdAt: "",
+    updatedAt: "",
+  });
+
+  const [formDetails, setFormDetails] = useState<FormType>(getEmptyForm());
+
   const [openOfAlert, setOpenOfAlert] = useState<boolean>(false);
+  const [mobileAnchorEl, setMobileAnchorEl] = useState<null | HTMLElement>(
+    null
+  );
+  const [profileAnchorEl, setProfileAnchorEl] = useState<null | HTMLElement>(
+    null
+  );
 
   useEffect(() => {
     if (formId) {
@@ -114,14 +120,6 @@ const EditForm: React.FC = () => {
   const handleClose = () => setOpen(false);
   const handleClickOfAlert = () => setOpenOfAlert(true);
 
-  // const handleCloseOfAlert = (
-  //   _event?: React.SyntheticEvent,
-  //   reason?: string
-  // ) => {
-  //   if (reason === "clickaway") return;
-  //   setOpenOfAlert(false);
-  // };
-
   const handleCloseOfAlert = (
     _event?: React.SyntheticEvent | Event,
     reason?: SnackbarCloseReason
@@ -140,176 +138,145 @@ const EditForm: React.FC = () => {
 
   const sendForm = () => handleClickOpen();
 
+  const handleMobileMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
+    setMobileAnchorEl(event.currentTarget);
+  };
+
+  const handleMobileMenuClose = () => {
+    setMobileAnchorEl(null);
+  };
+
+  const handleProfileMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
+    setProfileAnchorEl(event.currentTarget);
+  };
+
+  const handleProfileMenuClose = () => {
+    setProfileAnchorEl(null);
+  };
+
+  const handleLogout = async () => {
+    if (window.confirm("Really want to logout?")) {
+      await logout();
+      navigate("/");
+    }
+  };
+
+  const renderMobileMenu = (
+    <Menu
+      anchorEl={mobileAnchorEl}
+      open={Boolean(mobileAnchorEl)}
+      onClose={handleMobileMenuClose}
+    >
+      <MenuItem onClick={() => setValue(0)}>Questions</MenuItem>
+      <MenuItem onClick={() => setValue(1)}>Responses</MenuItem>
+      <MenuItem onClick={sendForm}>
+        <SendIcon sx={{ mr: 1 }} /> Send
+      </MenuItem>
+      <MenuItem>
+        <PaletteIcon sx={{ mr: 1 }} /> Theme
+      </MenuItem>
+      <MenuItem component="a" href={`/s/${formDetails._id}`} target="_blank">
+        <VisibilityIcon sx={{ mr: 1 }} /> Preview
+      </MenuItem>
+      <MenuItem>
+        <SettingsIcon sx={{ mr: 1 }} /> Settings
+      </MenuItem>
+      <MenuItem onClick={handleLogout}>
+        <AccountCircleIcon sx={{ mr: 1 }} /> Logout
+      </MenuItem>
+    </Menu>
+  );
+
+  const renderProfileMenu = (
+    <Menu
+      anchorEl={profileAnchorEl}
+      open={Boolean(profileAnchorEl)}
+      onClose={handleProfileMenuClose}
+    >
+      <MenuItem onClick={handleProfileMenuClose}>
+        <IconButton color="inherit">
+          <AccountCircleIcon />
+        </IconButton>
+        <p>Profile</p>
+      </MenuItem>
+      <MenuItem onClick={handleLogout}>
+        <IconButton color="inherit">
+          <AccountCircleIcon />
+        </IconButton>
+        <p>Logout</p>
+      </MenuItem>
+    </Menu>
+  );
+
   return (
-    // <div>
-    //   {formDetails?.createdBy === user?._id ? (
-    //     <>
-    //       <div className={classes.root}>
-    //         <AppBar position="static" color="default" elevation={2}>
-    //           <Toolbar className={classes.toolbar}>
-    //             <IconButton edge="start" style={{ color: "#140078" }}>
-    //               <ViewListIcon />
-    //             </IconButton>
-    //             <Typography
-    //               variant="h6"
-    //               noWrap
-    //               style={{ marginTop: "8.5px", color: "black" }}
-    //             >
-    //               {formDetails?.name}
-    //             </Typography>
-    //             <IconButton>
-    //               <StarBorderIcon />
-    //             </IconButton>
-
-    //             <Tabs
-    //               className={classes.title}
-    //               value={value}
-    //               onChange={handleChange}
-    //               indicatorColor="primary"
-    //               textColor="primary"
-    //               centered
-    //             >
-    //               <Tab label="Questions" />
-    //               <Tab label="Responses" />
-    //             </Tabs>
-
-    //             <IconButton onClick={sendForm}>
-    //               <SendIcon />
-    //             </IconButton>
-    //             <IconButton>
-    //               <PaletteIcon />
-    //             </IconButton>
-    //             <IconButton>
-    //               <VisibilityIcon />
-    //             </IconButton>
-    //             <IconButton>
-    //               <SettingsIcon />
-    //             </IconButton>
-    //             <IconButton edge="end">
-    //               <MoreIcon />
-    //             </IconButton>
-    //             <IconButton edge="end">
-    //               <AccountCircleIcon />
-    //             </IconButton>
-    //           </Toolbar>
-    //         </AppBar>
-    //       </div>
-
-    //       <Dialog open={open} onClose={handleClose}>
-    //         <DialogTitle>Copy and share link.</DialogTitle>
-    //         <DialogContent>
-    //           <Paper className={classes.paper}>
-    //             <Grid
-    //               container
-    //               justifyContent="space-between"
-    //               alignItems="center"
-    //             >
-    //               <Typography variant="body1">
-    //                 {`${window.location.origin}/s/${formDetails._id}`}
-    //               </Typography>
-    //               <IconButton
-    //                 className={classes.button}
-    //                 size="medium"
-    //                 onClick={clipToClipboard}
-    //               >
-    //                 <FilterNoneIcon />
-    //               </IconButton>
-    //             </Grid>
-    //           </Paper>
-    //           <DialogContentText />
-    //         </DialogContent>
-    //         <DialogActions>
-    //           <Button onClick={handleClose} color="primary">
-    //             Cancel
-    //           </Button>
-    //         </DialogActions>
-    //       </Dialog>
-
-    //       <Snackbar
-    //         anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
-    //         open={openOfAlert}
-    //         autoHideDuration={3000}
-    //         onClose={handleCloseOfAlert}
-    //         message="Copied to clipboard"
-    //         action={
-    //           <IconButton
-    //             size="small"
-    //             aria-label="close"
-    //             color="inherit"
-    //             onClick={handleCloseOfAlert}
-    //           >
-    //             <CloseIcon fontSize="small" />
-    //           </IconButton>
-    //         }
-    //       />
-    //       <TabPanel value={value} index={0}>
-    //         <QuestionsTab formData={formDetails as FormDataType} />
-    //       </TabPanel>
-    //       <TabPanel value={value} index={1}>
-    //         {/* <ResponseTab formData={formDetails as FormType} formId={formID} /> */}
-    //         {/* <ResponseTab formData={formDetails as FormType} formId={formID} /> */}
-    //       </TabPanel>
-    //     </>
-    //   ) : (
-    //     <p>You're not the owner of the form</p>
-    //   )}
-    // </div>
-
     <div>
       {user &&
       (user.role === "admin" ||
         (user.role === "user" && formDetails?.createdBy === user._id)) ? (
         <>
-          <div className={classes.root}>
-            <AppBar position="static" color="default" elevation={2}>
-              <Toolbar className={classes.toolbar}>
-                <IconButton edge="start" style={{ color: "#140078" }}>
-                  <ViewListIcon />
-                </IconButton>
-                <Typography
-                  variant="h6"
-                  noWrap
-                  style={{ marginTop: "8.5px", color: "black" }}
-                >
-                  {formDetails?.name}
-                </Typography>
-                <IconButton>
-                  <StarBorderIcon />
-                </IconButton>
+          <AppBar position="static" color="default" elevation={2}>
+            <Toolbar>
+              <IconButton edge="start" sx={{ color: "#140078" }}>
+                <ViewListIcon />
+              </IconButton>
+              <Typography
+                variant="h6"
+                noWrap
+                sx={{ flexGrow: 1, mt: "8.5px", color: "black" }}
+              >
+                {formDetails?.name}
+              </Typography>
 
-                <Tabs
-                  className={classes.title}
-                  value={value}
-                  onChange={handleChange}
-                  indicatorColor="primary"
-                  textColor="primary"
-                  centered
-                >
-                  <Tab label="Questions" />
-                  <Tab label="Responses" />
-                </Tabs>
+              {!isMobile && (
+                <>
+                  <IconButton>
+                    <StarBorderIcon />
+                  </IconButton>
+                  <Tabs
+                    value={value}
+                    onChange={handleChange}
+                    indicatorColor="primary"
+                    textColor="primary"
+                    centered
+                  >
+                    <Tab label="Questions" />
+                    <Tab label="Responses" />
+                  </Tabs>
+                  <a
+                    href={`/s/${formDetails._id}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <IconButton>
+                      <VisibilityIcon />
+                    </IconButton>
+                  </a>
+                  <IconButton onClick={sendForm}>
+                    <SendIcon />
+                  </IconButton>
+                  <IconButton>
+                    <PaletteIcon />
+                  </IconButton>
+                  <IconButton>
+                    <SettingsIcon />
+                  </IconButton>
+                </>
+              )}
 
-                <IconButton onClick={sendForm}>
-                  <SendIcon />
-                </IconButton>
-                <IconButton>
-                  <PaletteIcon />
-                </IconButton>
-                <IconButton>
-                  <VisibilityIcon />
-                </IconButton>
-                <IconButton>
-                  <SettingsIcon />
-                </IconButton>
-                <IconButton edge="end">
+              {isMobile ? (
+                <IconButton edge="end" onClick={handleMobileMenuOpen}>
                   <MoreIcon />
                 </IconButton>
-                <IconButton edge="end">
+              ) : (
+                <IconButton edge="end" onClick={handleProfileMenuOpen}>
                   <AccountCircleIcon />
                 </IconButton>
-              </Toolbar>
-            </AppBar>
-          </div>
+              )}
+            </Toolbar>
+          </AppBar>
+
+          {renderMobileMenu}
+          {renderProfileMenu}
 
           <Dialog open={open} onClose={handleClose}>
             <DialogTitle>Copy and share link.</DialogTitle>
@@ -363,7 +330,7 @@ const EditForm: React.FC = () => {
             <QuestionsTab formData={formDetails as FormDataType} />
           </TabPanel>
           <TabPanel value={value} index={1}>
-            {/* <ResponseTab formData={formDetails as FormType} formId={formID} /> */}
+            <ResponseTab formData={formDetails} formId={formID} />
           </TabPanel>
         </>
       ) : (

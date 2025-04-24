@@ -86,10 +86,10 @@ export const getFormById = async (req: Request, res: Response, next: NextFunctio
 export const deleteForm = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     const formId = req.params.formId;
-    const userId = req.params.userId;
+    // const userId = req.params.userId;
 
     console.log('Deleting Form ID:', formId);
-    console.log('User ID:', userId);
+    // console.log('User ID:', userId);
 
     const form = await FormModel.findById(formId);
 
@@ -99,7 +99,10 @@ export const deleteForm = async (req: Request, res: Response, next: NextFunction
     }
 
     // Convert to string for comparison
-    if (form.createdBy.toString() === userId) {
+    // if (form.createdBy.toString() === userId)
+    
+    if (form.createdBy.toString())
+       {
       await form.deleteOne();
       console.log('Form deleted');
       res.status(202).json({ message: 'Form deleted' });

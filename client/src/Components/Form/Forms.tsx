@@ -1,56 +1,3 @@
-// import React, { useEffect, useState } from "react";
-// import { Box, Grid, CircularProgress, Container } from "@mui/material";
-// import OneForm from "./OneForm";
-// import { FormType, useFormContext } from "../../context/FormContext";
-
-// interface FormsProps {
-//   userId?: string;
-//   // fetchAllForms: () => Promise<void>;
-//   // fetchUserForms: () => Promise<void>;
-// }
-
-// const Forms: React.FC<FormsProps> = ({ userId }) => {
-//   const { forms, fetchAllForms, fetchUserForms } = useFormContext();
-//   const [loading, setLoading] = useState(true);
-
-//   useEffect(() => {
-//     const fetch = async () => {
-//       try {
-//         if (userId) {
-//           await fetchUserForms(userId);
-//         } else {
-//           // await fetchAllForms();
-//         }
-//       } catch (err) {
-//         console.error("Failed to fetch forms:", err);
-//       } finally {
-//         setLoading(false);
-//       }
-//     };
-//     fetch();
-//   }, [userId, fetchAllForms, fetchUserForms]);
-
-//   return (
-//     <Container maxWidth="lg">
-//       {loading ? (
-//         <Box display="flex" justifyContent="center" mt={4}>
-//           <CircularProgress />
-//         </Box>
-//       ) : (
-//         <Box p={2}>
-//           <Grid container spacing={3}>
-//             {forms.map((form: FormType) => (
-//               <OneForm key={form._id} form={form} />
-//             ))}
-//           </Grid>
-//         </Box>
-//       )}
-//     </Container>
-//   );
-// };
-
-// export default Forms;
-
 import React, { useEffect, useState } from "react";
 import {
   Box,
@@ -78,11 +25,13 @@ const Forms: React.FC<FormsProps> = ({ userId }) => {
 
       setLoading(true);
       try {
-        if (user.role === "admin") {
-          await fetchAllForms();
-        } else if (user.role === "user") {
-          await fetchUserForms(user._id); // use logged-in user's own ID
-        }
+        // if (user.role === "admin") {
+        //   await fetchAllForms();
+        // } else if (user.role === "user") {
+        //   await fetchUserForms(user._id); // use logged-in user's own ID
+        // }
+
+        await fetchUserForms(user._id);
       } catch (error) {
         console.error("Failed to fetch forms:", error);
       } finally {
@@ -102,8 +51,9 @@ const Forms: React.FC<FormsProps> = ({ userId }) => {
       ) : (
         <>
           <Box mt={4} mb={2}>
-            <Typography variant="h5" align="center">
-              {user?.role === "admin" ? "All Forms" : "My Forms"}
+            <Typography variant="h5" align="center" sx={{ color: "blue" }}>
+              {/* {user?.role === "admin" ? "All Forms" : "My Forms"} */}
+              My Forms
             </Typography>
           </Box>
 

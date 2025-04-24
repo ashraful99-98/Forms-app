@@ -9,15 +9,17 @@ import {
   Container,
 } from "@mui/material";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
-import { Delete } from "@mui/icons-material";
+import { Delete, Edit } from "@mui/icons-material";
 import { useAuth } from "../../context/AuthContext";
 import { useFormContext } from "../../context/FormContext";
 import AdminHeader from "./AdminHeader";
 import { format } from "timeago.js";
+import { useNavigate } from "react-router-dom";
 
 const FormTable: FC = () => {
   const { forms, fetchAllForms, deleteForm } = useFormContext();
   const { user } = useAuth();
+  const navigate = useNavigate();
 
   const [openModal, setOpenModal] = useState(false);
   const [selectedFormId, setSelectedFormId] = useState("");
@@ -78,6 +80,18 @@ const FormTable: FC = () => {
       sortable: false,
       filterable: false,
     },
+    {
+      field: "edit",
+      headerName: "Edit",
+      flex: 0.5,
+      renderCell: (params) => (
+        <Button onClick={() => navigate(`/form/${params.row.id as string}`)}>
+          <Edit sx={{ fontSize: 24, color: "#0288d1" }} />
+        </Button>
+      ),
+      sortable: false,
+      filterable: false,
+    },
   ];
 
   const rows = forms.map((form) => ({
@@ -86,9 +100,6 @@ const FormTable: FC = () => {
     description: form.description,
     questionCount: form.questions ? form.questions.length : 0,
     createdBy: form.createdBy || "Unknown",
-    // createdAt: form.createdAt
-    //   ? new Date(form.createdAt).toLocaleDateString()
-    //   : "N/A",
     createdAt: format(form.createdAt),
   }));
 
