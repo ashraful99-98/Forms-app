@@ -52,9 +52,17 @@ FormSchema.plugin(mongoosePaginate);
 export const FormModel = mongoose.model<IForm>('Form', FormSchema);
 
 
+
+
+
+
+
+
+// final code 
 // import mongoose, { Document, Schema } from 'mongoose';
 // import mongoosePaginate from 'mongoose-paginate-v2';
 
+// // Interface for options
 // export interface IOption {
 //   optionText: string;
 //   optionImage?: {
@@ -63,6 +71,7 @@ export const FormModel = mongoose.model<IForm>('Form', FormSchema);
 //   };
 // }
 
+// // Interface for questions
 // export interface IQuestion {
 //   open: boolean;
 //   questionText: string;
@@ -73,15 +82,17 @@ export const FormModel = mongoose.model<IForm>('Form', FormSchema);
 //   options: IOption[];
 // }
 
+// // Interface for the form model (extends mongoose document)
 // export interface IForm extends Document {
 //   createdBy: mongoose.Types.ObjectId;
 //   name: string;
 //   description: string;
 //   questions: IQuestion[];
-//   stared: boolean;
-//   formType: string;
+//   starred: boolean; // Corrected spelling here
+//   formType: 'anonymous' | 'public' | 'private'; // Enum for form types
 // }
 
+// // Schema for options (embedded in question)
 // const OptionSchema = new Schema<IOption>(
 //   {
 //     optionText: { type: String, required: true },
@@ -93,6 +104,7 @@ export const FormModel = mongoose.model<IForm>('Form', FormSchema);
 //   { _id: false }
 // );
 
+// // Schema for questions (holds options and image)
 // const QuestionSchema = new Schema<IQuestion>(
 //   {
 //     open: { type: Boolean, default: false },
@@ -106,18 +118,26 @@ export const FormModel = mongoose.model<IForm>('Form', FormSchema);
 //   { _id: false }
 // );
 
+// // Schema for form (main schema)
 // const FormSchema = new Schema<IForm>(
 //   {
-//     createdBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+//     createdBy: { type: Schema.Types.ObjectId, ref: 'User', required: true },
 //     name: { type: String, required: true },
 //     description: { type: String, default: '' },
-//     questions: [QuestionSchema],
-//     stared: { type: Boolean, default: false },
-//     formType: { type: String, default: 'anonymous' },
+//     questions: { type: [QuestionSchema], default: [] },
+//     starred: { type: Boolean, default: false },
+//     formType: { 
+//       type: String, 
+//       enum: ['anonymous', 'public', 'private'], 
+//       default: 'anonymous' 
+//     },
 //   },
 //   { timestamps: true }
 // );
 
+// // Applying pagination plugin
 // FormSchema.plugin(mongoosePaginate);
 
+// // Exporting the model
 // export const FormModel = mongoose.model<IForm>('Form', FormSchema);
+

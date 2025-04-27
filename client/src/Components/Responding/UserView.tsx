@@ -11,25 +11,28 @@
 //   FormControlLabel,
 //   Radio,
 //   Button,
-//   Box,
 // } from "@mui/material";
 // import MenuIcon from "@mui/icons-material/Menu";
 // import { useAuth } from "../../context/AuthContext";
 // import { useFormContext, FormType } from "../../context/FormContext";
 // import { useParams } from "react-router-dom";
-// import titleImg from "../../images/untitlteImg.avif";
 
-// // --- Type Interfaces ---
+// // Interfaces
+// export interface ImageDataType {
+//   public_id: string;
+//   url: string;
+// }
+
 // interface Option {
 //   _id: string;
 //   optionText: string;
-//   optionImage?: string;
+//   optionImage?: ImageDataType;
 // }
 
 // interface Question {
 //   _id: string;
 //   questionText: string;
-//   questionImage?: string;
+//   questionImage?: ImageDataType;
 //   options: Option[];
 // }
 
@@ -38,11 +41,11 @@
 //   optionId: string;
 // }
 
-// // --- Component ---
 // const UserView: React.FC = () => {
 //   const { user } = useAuth();
 //   const { fetchFormById, submitResponse } = useFormContext();
-//   const { formId } = useParams<{ formId: string }>(); // getting formId from URL
+//   const { formId } = useParams<{ formId: string }>();
+
 //   const [userId, setUserId] = useState<string>("");
 //   const [formData, setFormData] = useState<FormType | null>(null);
 //   const [questions, setQuestions] = useState<Question[]>([]);
@@ -52,6 +55,7 @@
 //     {}
 //   );
 
+//   // Set user ID
 //   useEffect(() => {
 //     if (user) {
 //       setUserId(user._id);
@@ -64,6 +68,7 @@
 //     }
 //   }, [user]);
 
+//   // Fetch form
 //   useEffect(() => {
 //     if (!formId) return;
 
@@ -79,32 +84,27 @@
 //       });
 //   }, [formId, fetchFormById]);
 
-//   const handleRadioChange = (selectedValue: string, questionIndex: number) => {
-//     const optionIndex = parseInt(selectedValue, 10);
-//     const question = questions[questionIndex];
-//     if (!question) return;
-
-//     const questionId = question._id;
-//     const option = question.options[optionIndex];
-//     if (!option) return;
-
-//     const optionId = option._id;
-//     const newResponse: ResponseData = { questionId, optionId };
-
-//     setSelectedValues((prev) => ({ ...prev, [questionId]: selectedValue }));
+//   // Handle radio button change
+//   const handleRadioChange = (optionId: string, questionId: string) => {
+//     setSelectedValues((prev) => ({
+//       ...prev,
+//       [questionId]: optionId,
+//     }));
 
 //     setResponseData((prevResponses) => {
 //       const index = prevResponses.findIndex((r) => r.questionId === questionId);
+//       const newResponse = { questionId, optionId };
 //       if (index === -1) {
 //         return [...prevResponses, newResponse];
 //       } else {
-//         const responsesCopy = [...prevResponses];
-//         responsesCopy[index] = newResponse;
-//         return responsesCopy;
+//         const updatedResponses = [...prevResponses];
+//         updatedResponses[index] = newResponse;
+//         return updatedResponses;
 //       }
 //     });
 //   };
 
+//   // Submit handler
 //   const handleSubmit = () => {
 //     if (!formData) return;
 
@@ -134,7 +134,7 @@
 //   if (!formData) return <div>Loading...</div>;
 
 //   return (
-//     <div style={{ minHeight: "100vh", marginBottom: "20px" }}>
+//     <div style={{ minHeight: "100vh" }}>
 //       <AppBar position="static" style={{ backgroundColor: "teal" }}>
 //         <Toolbar>
 //           <IconButton
@@ -145,92 +145,45 @@
 //           >
 //             <MenuIcon />
 //           </IconButton>
-//           <Typography variant="h6">Velocity Forms</Typography>
+//           <Typography variant="h6">Forms App</Typography>
 //         </Toolbar>
 //       </AppBar>
 
 //       <Grid container direction="column" alignItems="center">
 //         <Grid
-//           sx={{
+//           style={{
+//             borderTop: "10px solid teal",
+//             borderRadius: 10,
+//             width: "100%",
+//             maxWidth: "900px",
 //             marginTop: "20px",
 //           }}
-//           // style={{
-//           //   borderTop: "10px solid teal",
-//           //   borderRadius: 10,
-//           //   width: "100%",
-//           //   maxWidth: "900px",
-//           //   marginTop: "20px",
-//           // }}
 //         >
 //           <Paper elevation={2}>
-//             {/* <div style={{ padding: "20px" }}>
+//             <div style={{ padding: "20px" }}>
 //               <Typography variant="h4" gutterBottom>
 //                 {formData.name}
 //               </Typography>
 //               <Typography variant="subtitle1">
 //                 {formData.description}
 //               </Typography>
-//             </div> */}
-//             <Box sx={{ position: "relative", width: "100%" }}>
-//               {/* Background Image */}
-//               <Box
-//                 component="div"
-//                 sx={{
-//                   position: "absolute",
-//                   top: 0,
-//                   left: 0,
-//                   width: "100%",
-//                   height: "100%",
-//                   backgroundImage: `url(${titleImg})`,
-//                   backgroundSize: "cover",
-//                   backgroundPosition: "center",
-//                   opacity: 0.9,
-//                   zIndex: 1,
-//                   borderRadius: 2,
-//                 }}
-//               />
-
-//               {/* Foreground Content */}
-//               <Paper
-//                 elevation={2}
-//                 sx={{
-//                   width: "100%",
-//                   borderTop: "8px solid teal",
-//                   borderRadius: 2,
-//                   overflow: "hidden",
-//                   position: "relative",
-//                   zIndex: 2,
-//                   p: { xs: 2, sm: 4 },
-//                   backgroundColor: "rgba(255, 255, 255, 0.85)", // slight white transparency to make text stand out
-//                 }}
-//               >
-//                 <Typography
-//                   variant="h4"
-//                   sx={{
-//                     fontFamily: "Roboto, sans-serif",
-//                     mb: 2,
-//                   }}
-//                 >
-//                   {formData.name}
-//                 </Typography>
-//                 <Typography variant="subtitle1">
-//                   {formData.description}
-//                 </Typography>
-//               </Paper>
-//             </Box>
+//             </div>
 //           </Paper>
 
 //           {!isSubmitted ? (
 //             <>
-//               {questions.map((ques, i) => (
-//                 <Paper key={i} style={{ marginTop: "16px", padding: "15px" }}>
+//               {questions.map((ques) => (
+//                 <Paper
+//                   key={ques._id}
+//                   style={{ marginTop: "16px", padding: "15px" }}
+//                 >
 //                   <Typography variant="subtitle1">
-//                     {i + 1}. {ques.questionText}
+//                     {ques.questionText}
 //                   </Typography>
 
 //                   {ques.questionImage && (
 //                     <img
-//                       src={ques.questionImage}
+//                       src={ques.questionImage.url}
 //                       width="80%"
 //                       alt="question"
 //                       style={{ marginTop: "10px" }}
@@ -238,21 +191,23 @@
 //                   )}
 
 //                   <RadioGroup
-//                     aria-label={`question-${i}`}
-//                     name={`question-${i}`}
+//                     aria-label={`question-${ques._id}`}
+//                     name={`question-${ques._id}`}
 //                     value={selectedValues[ques._id] || ""}
-//                     onChange={(e) => handleRadioChange(e.target.value, i)}
+//                     onChange={(e) =>
+//                       handleRadioChange(e.target.value, ques._id)
+//                     }
 //                   >
-//                     {ques.options.map((op, j) => (
-//                       <div key={j} style={{ marginLeft: "10px" }}>
+//                     {ques.options.map((op) => (
+//                       <div key={op._id} style={{ marginLeft: "10px" }}>
 //                         <FormControlLabel
-//                           value={j.toString()}
+//                           value={op._id}
 //                           control={<Radio />}
 //                           label={op.optionText}
 //                         />
 //                         {op.optionImage && (
 //                           <img
-//                             src={op.optionImage}
+//                             src={op.optionImage.url}
 //                             width="64%"
 //                             alt="option"
 //                             style={{ marginLeft: "25px", marginBottom: "10px" }}
@@ -269,9 +224,7 @@
 //                 variant="contained"
 //                 color="primary"
 //                 onClick={handleSubmit}
-//                 sx={{
-//                   marginTop: "10px",
-//                 }}
+//                 sx={{ marginTop: "10px" }}
 //               >
 //                 Submit
 //               </Button>
@@ -295,198 +248,12 @@
 //         </Grid>
 //       </Grid>
 //     </div>
-
-//     // <Grid container direction="column" alignItems="center" sx={{ px: 2 }}>
-//     //   <Grid
-//     //     sx={{
-//     //       mt: 3,
-//     //       width: "100%",
-//     //       maxWidth: 900,
-//     //     }}
-//     //   >
-//     //     <Paper
-//     //       elevation={2}
-//     //       sx={{
-//     //         borderTop: "8px solid teal",
-//     //         borderRadius: 2,
-//     //         overflow: "hidden",
-//     //       }}
-//     //     >
-//     //       <Box
-//     //         sx={{
-//     //           position: "relative",
-//     //           width: "100%",
-//     //           height: { xs: 200, md: 300 },
-//     //         }}
-//     //       >
-//     //         {/* Background Image */}
-//     //         <Box
-//     //           sx={{
-//     //             position: "absolute",
-//     //             top: 0,
-//     //             left: 0,
-//     //             width: "100%",
-//     //             height: "100%",
-//     //             backgroundImage: `url(${titleImg})`,
-//     //             backgroundSize: "cover",
-//     //             backgroundPosition: "center",
-//     //             opacity: 0.9,
-//     //             zIndex: 1,
-//     //           }}
-//     //         />
-
-//     //         {/* Foreground Content */}
-//     //         <Box
-//     //           sx={{
-//     //             position: "relative",
-//     //             zIndex: 2,
-//     //             p: { xs: 2, sm: 4 },
-//     //             backgroundColor: "rgba(255, 255, 255, 0.85)",
-//     //             height: "100%",
-//     //             display: "flex",
-//     //             flexDirection: "column",
-//     //             justifyContent: "center",
-//     //             borderRadius: 2,
-//     //           }}
-//     //         >
-//     //           <Typography
-//     //             variant="h4"
-//     //             sx={{
-//     //               fontFamily: "Roboto, sans-serif",
-//     //               mb: 1,
-//     //               fontSize: { xs: "1.5rem", md: "2.5rem" },
-//     //             }}
-//     //           >
-//     //             {formData.name}
-//     //           </Typography>
-//     //           <Typography
-//     //             variant="subtitle1"
-//     //             sx={{
-//     //               fontSize: { xs: "0.9rem", md: "1.2rem" },
-//     //             }}
-//     //           >
-//     //             {formData.description}
-//     //           </Typography>
-//     //         </Box>
-//     //       </Box>
-//     //     </Paper>
-
-//     //     {!isSubmitted ? (
-//     //       <>
-//     //         {questions.map((ques, i) => (
-//     //           <Paper
-//     //             key={i}
-//     //             sx={{
-//     //               mt: 2,
-//     //               p: { xs: 2, md: 3 },
-//     //               borderRadius: 2,
-//     //               width: "100%",
-//     //             }}
-//     //           >
-//     //             <Typography
-//     //               variant="subtitle1"
-//     //               sx={{
-//     //                 fontWeight: 600,
-//     //                 fontSize: { xs: "1rem", md: "1.25rem" },
-//     //               }}
-//     //             >
-//     //               {i + 1}. {ques.questionText}
-//     //             </Typography>
-
-//     //             {ques.questionImage && (
-//     //               <Box
-//     //                 component="img"
-//     //                 src={ques.questionImage}
-//     //                 alt="question"
-//     //                 sx={{
-//     //                   width: "100%",
-//     //                   maxHeight: 300,
-//     //                   objectFit: "contain",
-//     //                   mt: 2,
-//     //                   borderRadius: 1,
-//     //                 }}
-//     //               />
-//     //             )}
-
-//     //             <RadioGroup
-//     //               aria-label={`question-${i}`}
-//     //               name={`question-${i}`}
-//     //               value={selectedValues[ques._id] || ""}
-//     //               onChange={(e) => handleRadioChange(e.target.value, i)}
-//     //               sx={{ mt: 1 }}
-//     //             >
-//     //               {ques.options.map((op, j) => (
-//     //                 <Box key={j} sx={{ ml: 1, mb: 2 }}>
-//     //                   <FormControlLabel
-//     //                     value={j.toString()}
-//     //                     control={<Radio />}
-//     //                     label={op.optionText}
-//     //                   />
-//     //                   {op.optionImage && (
-//     //                     <Box
-//     //                       component="img"
-//     //                       src={op.optionImage}
-//     //                       alt="option"
-//     //                       sx={{
-//     //                         width: "80%",
-//     //                         mt: 1,
-//     //                         ml: 3,
-//     //                         borderRadius: 1,
-//     //                       }}
-//     //                     />
-//     //                   )}
-//     //                   <Divider sx={{ my: 1 }} />
-//     //                 </Box>
-//     //               ))}
-//     //             </RadioGroup>
-//     //           </Paper>
-//     //         ))}
-
-//     //         <Button
-//     //           variant="contained"
-//     //           color="primary"
-//     //           onClick={handleSubmit}
-//     //           sx={{
-//     //             mt: 3,
-//     //             width: { xs: "100%", sm: "auto" },
-//     //           }}
-//     //         >
-//     //           Submit
-//     //         </Button>
-//     //       </>
-//     //     ) : (
-//     //       <Paper
-//     //         sx={{
-//     //           mt: 4,
-//     //           p: { xs: 2, md: 3 },
-//     //           borderRadius: 2,
-//     //           textAlign: "center",
-//     //           width: "100%",
-//     //         }}
-//     //       >
-//     //         <Typography variant="h6" sx={{ mb: 1 }}>
-//     //           Form submitted!
-//     //         </Typography>
-//     //         <Typography variant="body2">
-//     //           Thanks for submitting the form.
-//     //         </Typography>
-//     //         <Button
-//     //           variant="outlined"
-//     //           color="secondary"
-//     //           onClick={reloadForAnotherResponse}
-//     //           sx={{ mt: 2 }}
-//     //         >
-//     //           Submit another response
-//     //         </Button>
-//     //       </Paper>
-//     //     )}
-//     //   </Grid>
-//     // </Grid>
 //   );
 // };
 
 // export default UserView;
 
+// old code
 import React, { useState, useEffect } from "react";
 import {
   AppBar,

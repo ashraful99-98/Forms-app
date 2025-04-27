@@ -16,6 +16,7 @@ export interface FormType {
   description: string;
   createdBy: string;
   questions: any[];
+  // questions: IQuestion[];
   formType?: string;
   stared?: boolean;
   createdAt: string;

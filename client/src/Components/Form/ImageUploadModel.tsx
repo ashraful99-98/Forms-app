@@ -1,3 +1,4 @@
+// final attam
 import React, { useState, ChangeEvent } from "react";
 import {
   Dialog,
@@ -10,28 +11,36 @@ import {
 } from "@mui/material";
 import { useUpload } from "../../context/UploadContext";
 
-interface ImageUploadModelProps {
-  handleImagePopOpen: boolean;
-  handleImagePopClose: () => void;
-  updateImageLink: (imageLink: string, contextData: any) => void;
-  contextData: any;
+// Correct type based on your ImageContextData
+interface ImageContextData {
+  question: number | null;
+  option: number | null;
 }
 
-const MAX_IMAGE_SIZE = 3110670; // Approx 3MB
+interface ImageUploadModelProps {
+  open: boolean; // ✅ Correct prop name
+  onClose: () => void; // ✅ Correct prop name
+  updateImageLink: (imageLink: string, context: ImageContextData) => void;
+  context: ImageContextData;
+}
+
+const MAX_IMAGE_SIZE = 3 * 1024 * 1024; // 3MB
 
 const ImageUploadModel: React.FC<ImageUploadModelProps> = ({
-  handleImagePopOpen,
-  handleImagePopClose,
+  open,
+  onClose,
   updateImageLink,
-  contextData,
+  context,
 }) => {
   const [image, setImage] = useState<File | undefined>(undefined);
   const [imageWarning, setImageWarning] = useState("");
 
   const { uploadImage } = useUpload();
+
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      setImage(e.target.files[0]);
+    const file = e.target.files?.[0];
+    if (file) {
+      setImage(file);
       setImageWarning("");
     }
   };
@@ -43,89 +52,56 @@ const ImageUploadModel: React.FC<ImageUploadModelProps> = ({
     }
 
     if (image.size > MAX_IMAGE_SIZE) {
-      setImageWarning("File size is too big. Maximum allowed is ~3MB.");
+      setImageWarning("File size is too big. Maximum allowed is 3MB.");
       return;
     }
 
     const allowedTypes = ["image/jpeg", "image/png", "image/gif", "image/webp"];
     if (!allowedTypes.includes(image.type)) {
-      setImageWarning("Only image files (JPG, PNG, GIF, WEBP) are allowed.");
+      setImageWarning("Only JPG, PNG, GIF, or WEBP images are allowed.");
       return;
     }
 
     try {
-      const data = await uploadImage(image);
-      const imageLink = `${data.host}/${data.image}`;
-      updateImageLink(imageLink, contextData);
-      handleImagePopClose();
+      const uploadedImage = await uploadImage(image);
+      const imageLink = uploadedImage.url;
+
+      if (!imageLink) {
+        setImageWarning("Image upload failed, no image URL returned.");
+        return;
+      }
+
+      updateImageLink(imageLink, context);
+      onClose();
     } catch (error: any) {
       const resMessage =
-        (error.response?.data?.message as string) ||
+        error.response?.data?.message ||
         error.message ||
         "An error occurred while uploading.";
       setImageWarning(resMessage);
     }
   };
 
-  // const handleUpload = async () => {
-  //   if (!image) {
-  //     setImageWarning("Please select an image.");
-  //     return;
-  //   }
-
-  //   if (image.size > MAX_IMAGE_SIZE) {
-  //     setImageWarning("File size is too big. Maximum allowed is ~3MB.");
-  //     return;
-  //   }
-
-  //   const allowedTypes = ["image/jpeg", "image/png", "image/gif", "image/webp"];
-  //   if (!allowedTypes.includes(image.type)) {
-  //     setImageWarning("Only image files (JPG, PNG, GIF, WEBP) are allowed.");
-  //     return;
-  //   }
-
-  //   try {
-  //     const uploaded = await uploadImage(image);
-  //     const imageLink = uploaded?.url;
-
-  //     if (!imageLink) {
-  //       setImageWarning("Image upload failed, no image URL returned.");
-  //       return;
-  //     }
-
-  //     updateImageLink(imageLink, contextData);
-  //     handleImagePopClose();
-  //   } catch (error: any) {
-  //     const resMessage =
-  //       (error.response?.data?.message as string) ||
-  //       error.message ||
-  //       "An error occurred while uploading.";
-  //     setImageWarning(resMessage);
-  //   }
-  // };
-
   return (
-    <Dialog
-      open={handleImagePopOpen}
-      onClose={handleImagePopClose}
-      aria-labelledby="form-dialog-title"
-    >
+    <Dialog open={open} onClose={onClose} aria-labelledby="form-dialog-title">
       <DialogTitle id="form-dialog-title">Upload Image</DialogTitle>
       <DialogContent>
         <DialogContentText>
-          Upload an image for your question. Only JPG, PNG, GIF, or WEBP are
+          Upload an image for your question. Only JPG, PNG, GIF, or WEBP formats
           allowed, up to 3MB.
         </DialogContentText>
         <TextField
           type="file"
-          onChange={handleFileChange}
           fullWidth
+          onChange={handleFileChange}
           inputProps={{ accept: "image/*" }}
         />
-        {imageWarning && <p style={{ color: "red" }}>{imageWarning}</p>}
+        {imageWarning && (
+          <p style={{ color: "red", marginTop: "10px" }}>{imageWarning}</p>
+        )}
       </DialogContent>
       <DialogActions>
-        <Button onClick={handleImagePopClose} color="primary">
+        <Button onClick={onClose} color="primary">
           Cancel
         </Button>
         <Button onClick={handleUpload} color="primary" variant="contained">
@@ -138,6 +114,7 @@ const ImageUploadModel: React.FC<ImageUploadModelProps> = ({
 
 export default ImageUploadModel;
 
+// old code
 // import React, { useState, ChangeEvent } from "react";
 // import {
 //   Dialog,
@@ -157,7 +134,7 @@ export default ImageUploadModel;
 //   contextData: any;
 // }
 
-// const MAX_IMAGE_SIZE = 3 * 1024 * 1024; // 3MB
+// const MAX_IMAGE_SIZE = 3110670; // Approx 3MB
 
 // const ImageUploadModel: React.FC<ImageUploadModelProps> = ({
 //   handleImagePopOpen,
@@ -165,11 +142,10 @@ export default ImageUploadModel;
 //   updateImageLink,
 //   contextData,
 // }) => {
-//   const [image, setImage] = useState<File | null>(null);
+//   const [image, setImage] = useState<File | undefined>(undefined);
 //   const [imageWarning, setImageWarning] = useState("");
 
 //   const { uploadImage } = useUpload();
-
 //   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
 //     if (e.target.files && e.target.files[0]) {
 //       setImage(e.target.files[0]);
@@ -190,14 +166,14 @@ export default ImageUploadModel;
 
 //     const allowedTypes = ["image/jpeg", "image/png", "image/gif", "image/webp"];
 //     if (!allowedTypes.includes(image.type)) {
-//       setImageWarning("Only JPG, PNG, GIF, or WEBP images are allowed.");
+//       setImageWarning("Only image files (JPG, PNG, GIF, WEBP) are allowed.");
 //       return;
 //     }
 
 //     try {
-//       const uploadedImage = await uploadImage(image);
-//       const imageLink = uploadedImage.url; // Now you get direct image URL
-//       updateImageLink(imageLink, contextData);
+//       const data = await uploadImage(image);
+//       // const imageLink = `${data.host}/${data.image}`;
+//       // updateImageLink(imageLink, contextData);
 //       handleImagePopClose();
 //     } catch (error: any) {
 //       const resMessage =
@@ -207,6 +183,43 @@ export default ImageUploadModel;
 //       setImageWarning(resMessage);
 //     }
 //   };
+
+//   // const handleUpload = async () => {
+//   //   if (!image) {
+//   //     setImageWarning("Please select an image.");
+//   //     return;
+//   //   }
+
+//   //   if (image.size > MAX_IMAGE_SIZE) {
+//   //     setImageWarning("File size is too big. Maximum allowed is ~3MB.");
+//   //     return;
+//   //   }
+
+//   //   const allowedTypes = ["image/jpeg", "image/png", "image/gif", "image/webp"];
+//   //   if (!allowedTypes.includes(image.type)) {
+//   //     setImageWarning("Only image files (JPG, PNG, GIF, WEBP) are allowed.");
+//   //     return;
+//   //   }
+
+//   //   try {
+//   //     const uploaded = await uploadImage(image);
+//   //     const imageLink = uploaded?.url;
+
+//   //     if (!imageLink) {
+//   //       setImageWarning("Image upload failed, no image URL returned.");
+//   //       return;
+//   //     }
+
+//   //     updateImageLink(imageLink, contextData);
+//   //     handleImagePopClose();
+//   //   } catch (error: any) {
+//   //     const resMessage =
+//   //       (error.response?.data?.message as string) ||
+//   //       error.message ||
+//   //       "An error occurred while uploading.";
+//   //     setImageWarning(resMessage);
+//   //   }
+//   // };
 
 //   return (
 //     <Dialog

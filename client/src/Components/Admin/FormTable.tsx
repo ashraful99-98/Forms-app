@@ -99,6 +99,7 @@ const FormTable: FC = () => {
     name: form.name,
     description: form.description,
     questionCount: form.questions ? form.questions.length : 0,
+    // createdBy: form.createdBy.name,
     createdBy: form.createdBy || "Unknown",
     createdAt: format(form.createdAt),
   }));
