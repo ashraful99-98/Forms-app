@@ -9,6 +9,9 @@ dotenv.config();
 const JWT_SECRET = process.env.JWT_SECRET || "secret";
 // const JWT_SECRET = process.env.JWT_SECRET as string; 
 
+
+
+
 // Register Controller
 export const register = async (
   req: Request,
@@ -39,6 +42,41 @@ export const register = async (
     res.status(500).json({ message: "Server error" });
   }
 };
+
+
+// Register Admin Controller
+
+export const registerAdmin = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    const { name, email, password } = req.body;
+
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      res.status(400).json({ message: "User already exists" });
+      return;
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    const user: IUser = new User({
+      name,
+      email,
+      password: hashedPassword,
+      role: "admin", // ✅ Here we are setting role to "admin"
+    });
+
+    await user.save();
+    res.status(201).json({ message: "Admin registered successfully" });
+  } catch (err) {
+    console.error("Register Admin Error:", err);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
 
 // Login Controller
 

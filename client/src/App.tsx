@@ -15,6 +15,7 @@ import Footer from "./pages/Footer";
 import AdminPanel from "./pages/AdminPanel";
 import UserTable from "./Components/Admin/UserTable";
 import FormTable from "./Components/Admin/FormTable";
+import AdminRegister from "./pages/AdminRegister";
 
 const App: React.FC = () => {
   return (
@@ -27,6 +28,7 @@ const App: React.FC = () => {
               <Route path="/" element={<Home />} />
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />
+              <Route path="/registerAdmin" element={<AdminRegister />} />
 
               {/* Protected Routes */}
               {/* <Route element={<PrivateRoute />}> */}
