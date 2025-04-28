@@ -10,6 +10,7 @@ import {
   Stack,
   useTheme,
   Alert,
+  Link,
 } from "@mui/material";
 import {
   Google as GoogleIcon,
@@ -49,10 +50,10 @@ const Login: React.FC = () => {
     setMessage("");
 
     try {
-      await login(email, password); // assume login sets the user context internally
+      await login(email, password);
       if (user && user.isBlocked) {
         setError("Your account is blocked.");
-        return; // don't navigate
+        return;
       }
 
       setMessage("Login successful!");
@@ -78,13 +79,13 @@ const Login: React.FC = () => {
         sx={{ boxShadow: 3, borderRadius: 4, overflow: "hidden" }}
       >
         {/* Left Side - Login Form */}
-        <Grid
-          sx={{ bgcolor: "background.paper", p: 6 }}
-          // item xs={12} md={6} sx={{ bgcolor: "background.paper", p: 6 }}
-        >
+        <Grid sx={{ bgcolor: "background.paper", p: 6 }}>
           <Box component="form" onSubmit={handleSubmit}>
             <Typography variant="h4" fontWeight="bold" gutterBottom>
-              LOGIN
+              LOGIN /{" "}
+              <Link href="/" variant="h5">
+                Home
+              </Link>
             </Typography>
             <Typography variant="body2" color="textSecondary" mb={4}>
               Login into your account..?
@@ -142,7 +143,6 @@ const Login: React.FC = () => {
 
               <Divider sx={{ my: 3 }}>OR</Divider>
               <Button
-                // startIcon={<SignpostOutlined />}
                 variant="outlined"
                 fullWidth
                 sx={{ borderRadius: "30px", textTransform: "none" }}
@@ -182,16 +182,6 @@ const Login: React.FC = () => {
               display: "none",
             },
           }}
-          // item
-          // xs={12}
-          // md={6}
-          // sx={{
-          //   position: "relative",
-          //   background: `url(${loginImg}) center/cover no-repeat`,
-          //   [theme.breakpoints.down("md")]: {
-          //     display: "none",
-          //   },
-          // }}
         >
           <Box
             component="img"

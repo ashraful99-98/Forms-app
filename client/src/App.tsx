@@ -13,9 +13,10 @@ import ErrorRadios from "./Components/Responding/RadioCheck";
 import { FormProvider } from "./context/FormContext";
 import Footer from "./pages/Footer";
 import AdminPanel from "./pages/AdminPanel";
-import UserTable from "./Components/Admin/UserTable";
-import FormTable from "./Components/Admin/FormTable";
 import AdminRegister from "./pages/AdminRegister";
+import AdminForms from "./pages/Admin/AdminForms";
+import AdminTeam from "./pages/Admin/AdminTeam";
+import AdminUser from "./pages/Admin/AdminUser";
 
 const App: React.FC = () => {
   return (
@@ -41,17 +42,22 @@ const App: React.FC = () => {
 
               <Route element={<PrivateRoute />}>
                 <Route path="/admin" element={<AdminPanel />} />
-                <Route
+
+                {/* <Route
                   path="/admin/users"
                   element={<UserTable isTeam={false} />}
-                />
+                /> */}
 
-                <Route
+                <Route path="/admin/users" element={<AdminUser />} />
+
+                {/* <Route
                   path="/admin/admins"
                   element={<UserTable isTeam={true} />}
-                />
+                /> */}
+                <Route path="/admin/admins" element={<AdminTeam />} />
 
-                <Route path="/admin/forms" element={<FormTable />} />
+                {/* <Route path="/admin/forms" element={<FormTable />} /> */}
+                <Route path="/admin/forms" element={<AdminForms />} />
               </Route>
             </Routes>
           </div>

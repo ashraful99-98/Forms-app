@@ -68,10 +68,7 @@ const Register: React.FC = () => {
         }}
       >
         {/* Left Side - Register Form */}
-        <Grid
-          //  item xs={12} md={6}
-          sx={{ bgcolor: "background.paper", p: 6 }}
-        >
+        <Grid sx={{ bgcolor: "background.paper", p: 6 }}>
           <Box component="form" onSubmit={handleSubmit}>
             <Typography variant="h4" fontWeight="bold" gutterBottom>
               Get Started Now
@@ -135,25 +132,6 @@ const Register: React.FC = () => {
                   </Link>
                 </Typography>
               </Stack>
-
-              {/* <Button
-                type="submit"
-                variant="contained"
-                size="large"
-                fullWidth
-                sx={{
-                  mt: 2,
-                  py: 1.5,
-                  background:
-                    "linear-gradient(90deg, #6A11CB 0%, #2575FC 100%)",
-                  borderRadius: "30px",
-                  fontWeight: "bold",
-                  fontSize: "1rem",
-                  textTransform: "none",
-                }}
-              >
-                Signup Now
-              </Button> */}
               <Button
                 type="submit"
                 variant="contained"

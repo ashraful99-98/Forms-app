@@ -1,20 +1,3 @@
-// import React, { useEffect } from "react";
-// import Dashboard from "./Dashboard";
-// import LandingPage from "./LandingPage";
-// import { useAuth } from "../context/AuthContext";
-
-// const Home: React.FC = () => {
-//   const { user, fetchCurrentUser } = useAuth();
-
-//   useEffect(() => {
-//     fetchCurrentUser(); // Ensure we fetch the user status on mount
-//   }, [fetchCurrentUser]);
-
-//   return user ? <Dashboard /> : <LandingPage />;
-// };
-
-// export default Home;
-
 import React, { useEffect } from "react";
 import Dashboard from "./Dashboard";
 import LandingPage from "./LandingPage";
