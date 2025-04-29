@@ -1,20 +1,3 @@
-// import React from "react";
-// import { Navigate, Outlet, useLocation } from "react-router-dom";
-// import { useAuth } from "../../context/AuthContext"; // adjust path if needed
-
-// const PrivateRoute: React.FC = () => {
-//   const { user } = useAuth();
-//   const location = useLocation();
-
-//   return user ? (
-//     <Outlet />
-//   ) : (
-//     <Navigate to="/login" state={{ from: location }} replace />
-//   );
-// };
-
-// export default PrivateRoute;
-
 import { Outlet } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext"; // adjust path if needed
 import { Box, Typography } from "@mui/material";

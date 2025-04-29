@@ -90,24 +90,9 @@ export const FormProvider: React.FC<FormProviderProps> = ({ children }) => {
     }
   }, []);
 
-  // const fetchFormById = useCallback(
-  //   async (formId: string): Promise<FormType> => {
-  //     try {
-  //       const res = await axios.get(`${API_URL}get/${formId}`);
-  //       setSelectedForm(res.data);
-  //       return res.data;
-  //     } catch (err) {
-  //       console.error("Error fetching form:", err);
-  //       throw err;
-  //     }
-  //   },
-  //   []
-  // );
-
   const fetchFormById = useCallback(
     async (formId: string): Promise<FormType> => {
       try {
-        // get/67f41b3cadd39a6f69bbaa33
         const res = await axios.get(`${API_URL}get/${formId}`);
         const form = res.data;
 
@@ -124,22 +109,6 @@ export const FormProvider: React.FC<FormProviderProps> = ({ children }) => {
     },
     []
   );
-
-  // const createForm = useCallback(async (formData: Partial<FormType>) => {
-  //   try {
-  //     const res = await axios.post(`${API_URL}create`, formData);
-  //     // const res = await axios.post(
-  //     //   `http://localhost:8000/api/forms/create`,
-  //     //   formData
-  //     // );
-  //     console.log(res.data);
-  //     return res.data;
-  //   } catch (err) {
-  //     console.error("Error creating form:", err);
-  //     return null;
-  //   }
-  // }, []);
-
   const createForm = useCallback(async (formData: Partial<FormType>) => {
     try {
       const res = await axios.post(`${API_URL}create`, formData);

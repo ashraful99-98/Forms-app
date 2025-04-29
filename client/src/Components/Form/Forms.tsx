@@ -43,7 +43,10 @@ const Forms: React.FC<FormsProps> = ({ userId }) => {
   }, [user?.role, user?._id, fetchAllForms, fetchUserForms]);
 
   return (
-    <Container maxWidth="lg">
+    <Container
+      maxWidth="lg"
+      // sx={{ justifyContent: "center", alignItems: "center" }}
+    >
       {loading ? (
         <Box display="flex" justifyContent="center" mt={4}>
           <CircularProgress />

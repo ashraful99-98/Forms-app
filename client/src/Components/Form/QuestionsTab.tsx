@@ -964,7 +964,7 @@ const QuestionsTab: React.FC<QuestionsTabProps> = ({
                       {isImagePresent(ques.questionImage) && (
                         <img
                           src={ques.questionImage?.url}
-                          style={{ maxWidth: "500px", height: "400px" }}
+                          style={{ maxWidth: "100%" }}
                           alt="question"
                         />
                       )}
@@ -982,7 +982,8 @@ const QuestionsTab: React.FC<QuestionsTabProps> = ({
                           {op.optionImage && (
                             <img
                               src={op.optionImage.url}
-                              style={{ maxWidth: "400px", height: "400px" }}
+                              // style={{ maxWidth: "400px", height: "400px" }}
+                              style={{ maxWidth: "100%" }}
                               alt="option"
                             />
                           )}
