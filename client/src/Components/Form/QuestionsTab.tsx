@@ -129,8 +129,8 @@ const QuestionsTab: React.FC<QuestionsTabProps> = ({
     }
   };
 
-  const isImagePresent = (img?: ImageDataType) =>
-    Boolean(img && img.url.trim() !== "");
+  // const isImagePresent = (img?: ImageDataType) =>
+  //   Boolean(img && img.url.trim() !== "");
 
   const addMoreQuestionField = () => {
     const updated = questions.map((q) => ({ ...q, open: false }));

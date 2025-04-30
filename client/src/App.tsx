@@ -4,14 +4,12 @@ import { AuthProvider } from "./context/AuthContext";
 
 import Login from "./pages/Login";
 import Register from "./pages/Register";
-import Navbar from "./Components/Navbar/Navbar";
 import Home from "./pages/Home";
 import PrivateRoute from "./Components/utils/PrivateRoute";
 import EditForm from "./Components/Form/EditForm";
 import UserView from "./Components/Responding/UserView";
 import ErrorRadios from "./Components/Responding/RadioCheck";
 import { FormProvider } from "./context/FormContext";
-import Footer from "./pages/Footer";
 import AdminPanel from "./pages/AdminPanel";
 import AdminRegister from "./pages/AdminRegister";
 import AdminForms from "./pages/Admin/AdminForms";
