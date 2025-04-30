@@ -74,7 +74,7 @@ const AdminRegister: React.FC = () => {
         <Grid sx={{ bgcolor: "background.paper", p: 6 }}>
           <Box component="form" onSubmit={handleSubmit}>
             <Typography variant="h4" fontWeight="bold" gutterBottom>
-              Get Started Now
+              Create Admin Account
             </Typography>
             <Typography variant="body2" color="textSecondary" mb={4}>
               Create your free account
